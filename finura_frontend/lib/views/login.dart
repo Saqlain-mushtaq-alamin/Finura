@@ -1,3 +1,4 @@
+import 'package:finura_frontend/views/HomePage.dart';
 import 'package:finura_frontend/views/registerPage.dart';
 import 'package:flutter/material.dart';
 
@@ -112,6 +113,16 @@ class LoginPage extends StatelessWidget {
                             child: ElevatedButton(
                               onPressed: () {
                                 // TODO: Implement login logic
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(
+                                      userFirstName: 'User',//user's first name
+                                      userProfilePicUrl:// user's profile picture URL or default picture
+                                          'https://example.com/profile.jpg',
+                                    ),
+                                  ),
+                                );
                               },
                               child: const Text('Login'),
                             ),
