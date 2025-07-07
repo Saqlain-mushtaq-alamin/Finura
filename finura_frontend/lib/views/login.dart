@@ -1,3 +1,4 @@
+import 'package:finura_frontend/views/registerPage.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -93,7 +94,14 @@ class LoginPage extends StatelessWidget {
                                 child: const Text('Forget PIN?'),
                               ),
                               TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RegisterPage(),
+                                    ),
+                                  );
+                                },
                                 child: const Text('Register Now'),
                               ),
                             ],
