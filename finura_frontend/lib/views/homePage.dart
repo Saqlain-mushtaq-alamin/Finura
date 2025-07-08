@@ -61,9 +61,7 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
-          height:
-              MediaQuery.of(context).size.height -
-              56, // Adjust height to fit the screen
+          height: double.infinity, // Adjust height to fit the screen
           padding: const EdgeInsets.all(16.0),
           color: const Color.fromARGB(255, 235, 250, 235),
           child: Column(
@@ -248,7 +246,7 @@ class HomePage extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             const Text(
-                              'Budget',
+                              'Dashboard',
                               style: TextStyle(fontSize: 12),
                             ),
                           ],
@@ -358,16 +356,156 @@ class HomePage extends StatelessWidget {
                 ),
               ),
 
-              // Box 4: Button
+              // Box 4: finura chat box
               Container(
                 width: double.infinity,
+                height: 230.0,
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: StatefulBuilder(
+                  builder: (context, setState) {
+                    final TextEditingController _controller =
+                        TextEditingController();
+                    final ScrollController _scrollController =
+                        ScrollController();
+                    final List<String> messages = [
+                      "Hi, I am Finuro. I am here to give you financial advice...",
+                    ];
 
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle button press
+                    void _sendMessage() {
+                      final text = _controller.text.trim();
+                      if (text.isNotEmpty) {
+                        setState(() {
+                          messages.add(text);
+                          _controller.clear();
+                        });
+
+                        // Auto-scroll to bottom
+                        Future.delayed(const Duration(milliseconds: 100), () {
+                          _scrollController.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOut,
+                          );
+                        });
+                      }
+                    }
+
+                    return Column(
+                      children: [
+                        // Top Row
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: AssetImage(
+                                'assets/finuro_logo.png',
+                              ), // your logo
+                            ),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                "Finuro",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.fullscreen),
+                              onPressed: () {
+                                // Optional fullscreen logic
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Scrollable chat messages
+                        Expanded(
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            itemCount: messages.length,
+                            itemBuilder: (context, index) {
+                              final isBot = index == 0;
+                              return Align(
+                                alignment: isBot
+                                    ? Alignment.centerLeft
+                                    : Alignment.centerRight,
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  padding: const EdgeInsets.all(10),
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 250,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isBot
+                                        ? Colors.grey.shade200
+                                        : Colors.blue.shade100,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    messages[index],
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        // Input field and send button
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: TextField(
+                                  controller: _controller,
+                                  decoration: const InputDecoration(
+                                    hintText: "Type your message...",
+                                    border: InputBorder.none,
+                                  ),
+                                  onSubmitted: (_) => _sendMessage(),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Colors.blue,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.send,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                onPressed: _sendMessage,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
                   },
-                  child: const Text('Show Notification'),
                 ),
               ),
             ],
