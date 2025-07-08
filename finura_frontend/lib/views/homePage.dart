@@ -61,6 +61,9 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
+          height:
+              MediaQuery.of(context).size.height -
+              56, // Adjust height to fit the screen
           padding: const EdgeInsets.all(16.0),
           color: const Color.fromARGB(255, 235, 250, 235),
           child: Column(
@@ -338,32 +341,33 @@ class HomePage extends StatelessWidget {
                 ),
               ),
 
-              // Box 3: Button
-              Container(
-                width: double.infinity,
-                height: 100.0,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle button press
-                  },
-                  child: const Text('Show Notification'),
-                ),
-              ),
-
-              // Box 4: Notification Display
+              // Box 3: Notification Display
               Container(
                 padding: const EdgeInsets.all(12),
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 width: double.infinity,
+                height: 100.0, // Adjust height as needed
                 decoration: BoxDecoration(
                   color: Colors.yellow[100],
                   border: Border.all(color: Colors.orange),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
-                  'Notification will appear here.',
+                  'Notification will appear here.', //?this should be changed with last notification
                   style: TextStyle(color: Colors.black87),
+                ),
+              ),
+
+              // Box 4: Button
+              Container(
+                width: double.infinity,
+
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Handle button press
+                  },
+                  child: const Text('Show Notification'),
                 ),
               ),
             ],
