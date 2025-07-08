@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// ignore: must_be_immutable
 class HomePage extends StatelessWidget {
   final String userFirstName;
   final String userProfilePicUrl;
@@ -156,7 +157,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-            // Box 2: Dropdown Menu
+            // Box 2: all app facilities icons
             Container(
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.symmetric(vertical: 8),
@@ -165,19 +166,167 @@ class HomePage extends StatelessWidget {
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: DropdownButtonFormField<String>(
-                decoration: const InputDecoration.collapsed(hintText: ''),
-                hint: const Text('Select an option'),
-                items: const [
-                  DropdownMenuItem(value: 'option1', child: Text('Option 1')),
-                  DropdownMenuItem(value: 'option2', child: Text('Option 2')),
-                  DropdownMenuItem(value: 'option3', child: Text('Option 3')),
-                ],
-                onChanged: (value) {
-                  // Handle selection
-                },
+              child: SizedBox(
+                width: double.infinity,
+                height: 200.0, // Adjust height as needed
+
+                child: GridView.count(
+                  shrinkWrap: true,
+                  primary: false,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 16,
+                  ),
+                  crossAxisCount: 4,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    // Icon 1: Settings icon button
+                    GestureDetector(
+                      onTap: () {
+                        print("Icon 1 tapped"); //?need to change this
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Center(
+                            child: Image.asset(
+                              'assets/icons/settings.png',
+                              width: 40,
+                              height: 40,
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+                          const Text('Setting', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                    // Icon 2: Planning icon button
+                    GestureDetector(
+                      onTap: () {
+                        print("Icon 2 tapped"); //?need to change this
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icons/planning.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text('Panning', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                    // Icon 3: Dashboard icon button
+                    GestureDetector(
+                      onTap: () {
+                        print("Icon 3 tapped"); //?need to change this
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icons/dashboard.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text('Budget', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                    // Icon 4: histoy icon button
+                    GestureDetector(
+                      onTap: () {
+                        print("Icon 4 tapped"); //?need to change this
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icons/history.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text('History', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                    // Icon 5: targeted icon button
+                    GestureDetector(
+                      onTap: () {
+                        print("Icon 5 tapped"); //?need to change this
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icons/targeted.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Targeted',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Icon 6: calendar icon button
+                    GestureDetector(
+                      onTap: () {
+                        print("Icon 6 tapped"); //?need to change this
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icons/calendar.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Calendar',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Icon 7: help icon button
+                    GestureDetector(
+                      onTap: () {
+                        print("Icon 7 tapped"); //?need to change this
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icons/help-desk.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text('Help', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
+
+
+
+
+
 
             // Box 3: Button
             Container(
@@ -209,6 +358,19 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
+
+
+
+
+
+
+
+
+
+
+      // Bottom Navigation Bar
+      // This is a simple bottom navigation bar with three icons
+      // QR Scanner, Home, and Notification icons
 
       bottomNavigationBar: BottomAppBar(
         elevation: 8,
