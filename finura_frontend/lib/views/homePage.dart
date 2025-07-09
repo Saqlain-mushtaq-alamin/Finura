@@ -411,8 +411,8 @@ class HomePage extends StatelessWidget {
                             CircleAvatar(
                               radius: 20,
                               backgroundImage: AssetImage(
-                                'assets/finuro_logo.png',
-                              ), // your logo
+                                'assets/finura_icon.webp',
+                              ),
                             ),
                             const SizedBox(width: 8),
                             const Expanded(
