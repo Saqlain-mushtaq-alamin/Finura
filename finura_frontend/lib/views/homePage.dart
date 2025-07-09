@@ -1,3 +1,5 @@
+//import 'package:finura_frontend/views/finuraChatPage.dart';
+import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -60,8 +62,12 @@ class HomePage extends StatelessWidget {
 
       body: SingleChildScrollView(
         child: Container(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+
           width: double.infinity,
-          height: double.infinity, // Adjust height to fit the screen
+          //height: double.infinity, // Adjust height to fit the screen
           padding: const EdgeInsets.all(16.0),
           color: const Color.fromARGB(255, 235, 250, 235),
           child: Column(
@@ -359,7 +365,7 @@ class HomePage extends StatelessWidget {
               // Box 4: finura chat box
               Container(
                 width: double.infinity,
-                height: 230.0,
+                height: 400.0,
                 padding: const EdgeInsets.all(12),
                 margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: BoxDecoration(
@@ -422,7 +428,14 @@ class HomePage extends StatelessWidget {
                             IconButton(
                               icon: const Icon(Icons.fullscreen),
                               onPressed: () {
-                                // Optional fullscreen logic
+                                //Handle fullscreen action
+                                //Optional fullscreen logic
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FinuraChatPage(),
+                                  ),
+                                );
                               },
                             ),
                           ],
@@ -430,7 +443,7 @@ class HomePage extends StatelessWidget {
                         const SizedBox(height: 8),
 
                         // Scrollable chat messages
-                        Expanded(
+                        Flexible(
                           child: ListView.builder(
                             controller: _scrollController,
                             itemCount: messages.length,
