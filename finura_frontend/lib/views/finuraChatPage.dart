@@ -15,6 +15,8 @@ class _FinuraChatPageState extends State<FinuraChatPage> {
       isUser: false,
     ),
   ];
+  
+  get navigator => null;
 
   void _sendMessage() {
     final text = _controller.text.trim();
@@ -35,31 +37,37 @@ class _FinuraChatPageState extends State<FinuraChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(
-          255,
-          164,
-          245,
-          171,
-        ), // Use a color from the MaterialAccentColors
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ), // Change icon color to white
+        backgroundColor: const Color.fromARGB(255, 164, 245, 171),
+        iconTheme: IconThemeData(color: Colors.white),
         automaticallyImplyLeading: true,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ClipOval(
-            // Use an app icon or logo here
-            child: Image.asset(
-              'assets/finura_icon.webp', // Place your app icon in assets and update path
-              width: 32,
-              height: 32,
-              fit: BoxFit.cover, // Ensure the image fits well in the circle
+          child: GestureDetector(
+            onTap: () {
+              
+              navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FinuraChatPage(),//?need to work here
+                  
+                ),
+              );
+            },
+            child: ClipOval(
+              child: Image.asset(
+                'assets/finura_icon.webp',
+                width: 32,
+                height: 32,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         ),
+
         title: const Text('Finura'),
         centerTitle: true,
       ),
+
       body: Column(
         children: [
           Expanded(
