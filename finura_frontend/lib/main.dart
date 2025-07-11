@@ -1,4 +1,4 @@
-import 'package:finura_frontend/views/login.dart';
+import 'package:finura_frontend/views/loninPage/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {
