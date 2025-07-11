@@ -9,6 +9,8 @@ class FinuraLocalDbHelper {
 
   static Database? _database;
 
+  static var instance;
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDb();
@@ -38,7 +40,17 @@ class FinuraLocalDbHelper {
     ''');
   }
 
- 
+  // Insert user
+  Future<int> insertUser(Map<String, dynamic> user) async {
+    final db = await database;
+    return await db.insert('user', user);
+  }
+
+  //Get all users
+  Future<List<Map<String, dynamic>>> getUsers() async {
+    final db = await database;
+    return await db.query('user');
+  }
 
   // Add more CRUD methods as needed
 }

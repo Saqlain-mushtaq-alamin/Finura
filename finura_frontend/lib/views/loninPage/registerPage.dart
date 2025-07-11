@@ -1,6 +1,64 @@
+import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 import 'dart:io';
+
+// Dummy function to simulate storing user data in a database
+Future<void> storeUserData({
+  required String firstName,
+  required String lastName,
+  required String email,
+  required String occupation,
+  required String sex,
+  required String pin, // Already hashed
+  String? photoPath,
+}) async {
+  final db = await FinuraLocalDbHelper.instance.database;
+
+  String? savedImagePath;
+
+  // ...existing code...
+  if (photoPath != null) {
+    // Use your desired assets path
+    final customDir = Directory(
+      'D:/canvas/Finura/finura_frontend/assets/user_photo',
+    );
+    if (!await customDir.exists()) {
+      await customDir.create(recursive: true);
+    }
+    final fileName = basename(photoPath);
+    final newImagePath = '${customDir.path}/$fileName';
+
+    // Copy the image to the assets directory
+    await File(photoPath).copy(newImagePath);
+    savedImagePath = newImagePath;
+  }
+  // ...existing code...
+
+  await db.insert('user', {
+    'first_name': firstName,
+    'last_name': lastName,
+    'email': email,
+    'occupation': occupation,
+    'sex': sex,
+    'pin_hash': pin,
+    'created_at': DateTime.now().toIso8601String(),
+    'usger_photo': savedImagePath, // ✅ saved file path
+    'data_status': null,
+  });
+
+  print('User stored successfully.');
+}
+
+// Function to hash the pin using SHA256
+String hashPin(String pin) {
+  final bytes = utf8.encode(pin);
+  final digest = sha256.convert(bytes);
+  return digest.toString();
+}
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -36,7 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState!.validate()) {
       // Handle registration logic here
       ScaffoldMessenger.of(
-        context,
+        context as BuildContext,
       ).showSnackBar(const SnackBar(content: Text('Registration submitted!')));
     }
   }
@@ -47,14 +105,12 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         title: const Text('Register'),
         backgroundColor: Colors.green[700],
-         // Fixed invalid shade
+        // Fixed invalid shade
       ),
       body: Container(
         width: double.infinity,
         color: Colors.green[100], // Fixed invalid shade
         alignment: Alignment.center,
-        
-        
 
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
