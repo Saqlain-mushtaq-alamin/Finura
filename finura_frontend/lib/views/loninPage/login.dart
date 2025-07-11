@@ -1,5 +1,5 @@
 import 'package:finura_frontend/views/HomePage.dart';
-import 'package:finura_frontend/views/registerPage.dart';
+import 'package:finura_frontend/views/loninPage/registerPage.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
