@@ -1,12 +1,61 @@
+import 'dart:convert';
+
+import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:finura_frontend/views/HomePage.dart';
 import 'package:finura_frontend/views/loninPage/registerPage.dart';
 import 'package:flutter/material.dart';
+import 'package:crypto/crypto.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController accountController = TextEditingController();
   final TextEditingController pinController = TextEditingController();
 
   LoginPage({super.key});
+
+  Future<int> _getIdPin(String accountName, String pin) async {
+    final db = await FinuraLocalDbHelper().database;
+
+    // Fetch user by accountName (email)
+    final user = await db.query(
+      'user',
+      where: 'email = ?',
+      whereArgs: [accountName],
+      limit: 1,
+    );
+
+    // Check if user exists
+    if (user.isEmpty) {
+      ScaffoldMessenger.of(
+        FinuraLocalDbHelper.navigatorKey.currentContext!,
+      ).showSnackBar(const SnackBar(content: Text('Email not found')));
+      return 0;
+    }
+
+    // Get user's first name and photo if available
+    String? firstName;
+    String? userPhoto;
+    if (user.isNotEmpty) {
+      firstName = user.first['first_name'] as String?;
+      userPhoto = user.first['photo'] as String?;
+    }
+
+    // Encrypt the entered pin using sha256
+    final bytes = utf8.encode(pin); // Correct encoding
+    final digest = sha256.convert(bytes); // SHA-256 hash
+    final pinHash = digest.toString(); // Convert to string
+
+    if (user.first['pin_hash'] == pinHash) {
+      // Use 'pin_hash' column
+      return 1; // Pin matches
+    } else {
+      ScaffoldMessenger.of(
+        FinuraLocalDbHelper.navigatorKey.currentContext!,
+      ).showSnackBar(const SnackBar(content: Text('PIN does not match')));
+      return 0; // Pin does not match
+    }
+  }
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -112,19 +161,46 @@ class LoginPage extends StatelessWidget {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {
+                                _getIdPin(
+                                  accountController.text.trim(),
+                                  pinController.text.trim(),
+                                ).then((result) {
+                                  if (result == 1) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HomePage(
+                                          userFirstName:
+                                              'fistName', // user's first name
+                                          userProfilePicUrl:
+                                              'userPhoto', // user's profile picture URL or default picture
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                });
+                              },
+                              child: const Text('Login'),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
                                 // TODO: Implement login logic
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => HomePage(
-                                      userFirstName: 'User',//user's first name
-                                      userProfilePicUrl:// user's profile picture URL or default picture
+                                      userFirstName: 'User', //user's first name
+                                      userProfilePicUrl: // user's profile picture URL or default picture
                                           'https://example.com/profile.jpg',
                                     ),
                                   ),
                                 );
                               },
-                              child: const Text('Login'),
+                              child: const Text('home windows'),
                             ),
                           ),
                         ],

@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'dart:io';
 
-// Dummy function to simulate storing user data in a database
+//  function for simulate storing user data in the database
 Future<void> storeUserData({
   required String firstName,
   required String lastName,
@@ -23,7 +23,7 @@ Future<void> storeUserData({
 
   // ...existing code...
   if (photoPath != null) {
-    // Use your desired assets path
+    // Use assets path to save the user photo
     final customDir = Directory('assets/user_photo');
     if (!await customDir.exists()) {
       await customDir.create(recursive: true);
@@ -90,6 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
 //removable
+  // ignore: unused_element
   void _submit() {
     if (_formKey.currentState!.validate()) {
       // Handle registration logic here
@@ -222,7 +223,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomePage(userFirstName: _firstNameController.text.trim(), userProfilePicUrl: _photo?.path ?? ''),
+                          builder: (context) => HomePage(
+                            userFirstName: _firstNameController.text.trim(), 
+                            userProfilePicUrl: _photo?.path ?? ''),
                         ),
                       );
                     }

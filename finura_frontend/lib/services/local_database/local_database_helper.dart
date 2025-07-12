@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 
 class FinuraLocalDbHelper {
   static final FinuraLocalDbHelper _instance = FinuraLocalDbHelper._internal();
@@ -9,6 +12,9 @@ class FinuraLocalDbHelper {
   FinuraLocalDbHelper._internal();
 
   static Database? _database;
+
+  static var navigatorKey = GlobalKey<NavigatorState>();
+  static var sha256;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -32,11 +38,7 @@ class FinuraLocalDbHelper {
 
     print('Database file path: $newDbPath');
 
-    return await openDatabase(
-      newDbPath,
-      version: 1,
-      onCreate: _onCreate,
-    );
+    return await openDatabase(newDbPath, version: 1, onCreate: _onCreate);
   }
 
   Future _onCreate(Database db, int version) async {
@@ -54,5 +56,10 @@ class FinuraLocalDbHelper {
         data_status TEXT
       )
     ''');
+  }
+    // Method to fetch all users
+  Future<List<Map<String, dynamic>>> getAllUsers() async {
+    final db = await database;
+    return await db.query('user');  // Fetch all users from 'user' table
   }
 }

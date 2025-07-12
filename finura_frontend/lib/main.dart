@@ -1,3 +1,4 @@
+import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:finura_frontend/views/loninPage/login.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,9 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light,
         ),
       ),
+      navigatorKey: FinuraLocalDbHelper.navigatorKey,
+      //debugShowCheckedModeBanner: false,
+     
       home: LoginPage(),
     );
   }
