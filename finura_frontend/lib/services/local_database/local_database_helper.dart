@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -9,8 +10,6 @@ class FinuraLocalDbHelper {
 
   static Database? _database;
 
-  static var instance;
-
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDb();
@@ -19,8 +18,25 @@ class FinuraLocalDbHelper {
 
   Future<Database> _initDb() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'finura_local_db.db');
-    return await openDatabase(path, version: 1, onCreate: _onCreate);
+    final oldDbPath = join(dbPath, 'finura_local_db.db');
+    final newDbPath = join(dbPath, 'finura_local_database.db');
+
+    // Delete old database if exists
+    if (await File(oldDbPath).exists()) {
+      await deleteDatabase(oldDbPath);
+    }
+    // Delete new database if exists (for recreation)
+    if (await File(newDbPath).exists()) {
+      await deleteDatabase(newDbPath);
+    }
+
+    print('Database file path: $newDbPath');
+
+    return await openDatabase(
+      newDbPath,
+      version: 1,
+      onCreate: _onCreate,
+    );
   }
 
   Future _onCreate(Database db, int version) async {
@@ -34,23 +50,9 @@ class FinuraLocalDbHelper {
         occupation TEXT,
         sex TEXT CHECK(sex IN ('male', 'female', 'other')) NOT NULL,
         created_at TEXT NOT NULL,
-        usger_photo BLOB,
+        user_photo TEXT,
         data_status TEXT
       )
     ''');
   }
-
-  // Insert user
-  Future<int> insertUser(Map<String, dynamic> user) async {
-    final db = await database;
-    return await db.insert('user', user);
-  }
-
-  //Get all users
-  Future<List<Map<String, dynamic>>> getUsers() async {
-    final db = await database;
-    return await db.query('user');
-  }
-
-  // Add more CRUD methods as needed
 }

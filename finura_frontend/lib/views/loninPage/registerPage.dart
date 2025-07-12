@@ -16,16 +16,14 @@ Future<void> storeUserData({
   required String pin, // Already hashed
   String? photoPath,
 }) async {
-  final db = await FinuraLocalDbHelper.instance.database;
+  final db = await FinuraLocalDbHelper().database;
 
   String? savedImagePath;
 
   // ...existing code...
   if (photoPath != null) {
     // Use your desired assets path
-    final customDir = Directory(
-      'D:/canvas/Finura/finura_frontend/assets/user_photo',
-    );
+    final customDir = Directory('assets/user_photo');
     if (!await customDir.exists()) {
       await customDir.create(recursive: true);
     }
@@ -46,7 +44,7 @@ Future<void> storeUserData({
     'sex': sex,
     'pin_hash': pin,
     'created_at': DateTime.now().toIso8601String(),
-    'usger_photo': savedImagePath, // ✅ saved file path
+    'user_photo': savedImagePath, // ✅ saved file path
     'data_status': null,
   });
 
@@ -90,6 +88,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+//removable
   void _submit() {
     if (_formKey.currentState!.validate()) {
       // Handle registration logic here
@@ -164,9 +163,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   value: _selectedSex,
                   decoration: const InputDecoration(labelText: 'Sex'),
                   items: const [
-                    DropdownMenuItem(value: 'Male', child: Text('Male')),
-                    DropdownMenuItem(value: 'Female', child: Text('Female')),
-                    DropdownMenuItem(value: 'Other', child: Text('Other')),
+                    DropdownMenuItem(value: 'male', child: Text('Male')),
+                    DropdownMenuItem(value: 'female', child: Text('Female')),
+                    DropdownMenuItem(value: 'other', child: Text('Other')),
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -201,7 +200,28 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                 ),
                 const SizedBox(height: 50),
-                ElevatedButton(onPressed: _submit, child: const Text('Submit')),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      // Save user data to database
+                      await storeUserData(
+                        firstName: _firstNameController.text.trim(),
+                        lastName: _lastNameController.text.trim(),
+                        email: _emailController.text.trim(),
+                        occupation: _occupationController.text.trim(),
+                        sex: _selectedSex ?? '',
+                        pin: hashPin(_pinController.text.trim()),
+                        photoPath: _photo?.path,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Registration submitted!'),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Submit'),
+                ),
               ],
             ),
           ),
