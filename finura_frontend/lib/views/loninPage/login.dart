@@ -12,61 +12,63 @@ class LoginPage extends StatelessWidget {
 
   LoginPage({super.key});
 
- Future<int> _getIdPin(String accountName, String pin) async { 
-  final db = await FinuraLocalDbHelper().database;
+  Future<int> _getIdPin(String accountName, String pin) async {
+    final db = await FinuraLocalDbHelper().database;
 
-  // Fetch user by accountName (email)
-  final user = await db.query(
-    'user',
-    where: 'email = ?',
-    whereArgs: [accountName],
-    limit: 1,
-  );
-
-  // Check if user exists
-  if (user.isEmpty) {
-    ScaffoldMessenger.of(
-      FinuraLocalDbHelper.navigatorKey.currentContext!,
-    ).showSnackBar(const SnackBar(content: Text('Email not found')));
-    return 0;
-  }
-
-  // Get user's first name and photo if available
-  String? firstName;
-  String? userPhoto;
-  if (user.isNotEmpty) {
-    firstName = user.first['first_name'] as String?;
-    userPhoto = user.first['user_photo'] as String?;  // Make sure 'user_photo' is the correct column name in your table
-  }
-
-  // Encrypt the entered pin using sha256
-  final bytes = utf8.encode(pin); // Correct encoding
-  final digest = sha256.convert(bytes); // SHA-256 hash
-  final pinHash = digest.toString(); // Convert to string
-
-  if (user.first['pin_hash'] == pinHash) {
-    // Use 'pin_hash' column
-    // Navigate to the HomePage and pass the firstName and userPhoto values
-    Navigator.push(
-      FinuraLocalDbHelper.navigatorKey.currentContext!,
-      MaterialPageRoute(
-        builder: (context) => HomePage(
-          userFirstName: firstName ?? 'Guest', // Use the firstName value or fallback to 'Guest'
-          userProfilePicUrl: userPhoto ?? '',  // Use userPhoto or fallback to an empty string
-        ),
-      ),
+    // Fetch user by accountName (email)
+    final user = await db.query(
+      'user',
+      where: 'email = ?',
+      whereArgs: [accountName],
+      limit: 1,
     );
-    return 1; // Pin matches
-  } else {
-    ScaffoldMessenger.of(
-      FinuraLocalDbHelper.navigatorKey.currentContext!,
-    ).showSnackBar(const SnackBar(content: Text('PIN does not match')));
-    return 0; // Pin does not match
+
+    // Check if user exists
+    if (user.isEmpty) {
+      ScaffoldMessenger.of(
+        FinuraLocalDbHelper.navigatorKey.currentContext!,
+      ).showSnackBar(const SnackBar(content: Text('Email not found')));
+      return 0;
+    }
+
+    // Get user's first name and photo if available
+    String? firstName;
+    String? userPhoto;
+    if (user.isNotEmpty) {
+      firstName = user.first['first_name'] as String?;
+      userPhoto =
+          user.first['user_photo']
+              as String?; // Make sure 'user_photo' is the correct column name in your table
+    }
+
+    // Encrypt the entered pin using sha256
+    final bytes = utf8.encode(pin); // Correct encoding
+    final digest = sha256.convert(bytes); // SHA-256 hash
+    final pinHash = digest.toString(); // Convert to string
+
+    if (user.first['pin_hash'] == pinHash) {
+      // Use 'pin_hash' column
+      // Navigate to the HomePage and pass the firstName and userPhoto values
+      Navigator.push(
+        FinuraLocalDbHelper.navigatorKey.currentContext!,
+        MaterialPageRoute(
+          builder: (context) => HomePage(
+            userFirstName:
+                firstName ??
+                'Guest', // Use the firstName value or fallback to 'Guest'
+            userProfilePicUrl:
+                userPhoto ?? '', // Use userPhoto or fallback to an empty string
+          ),
+        ),
+      );
+      return 1; // Pin matches
+    } else {
+      ScaffoldMessenger.of(
+        FinuraLocalDbHelper.navigatorKey.currentContext!,
+      ).showSnackBar(const SnackBar(content: Text('PIN does not match')));
+      return 0; // Pin does not match
+    }
   }
-}
-
-
- 
 
   @override
   Widget build(BuildContext context) {
@@ -179,9 +181,13 @@ class LoginPage extends StatelessWidget {
                                   if (result == 1) {
                                     // Successfully logged in
                                     ScaffoldMessenger.of(
-                                      FinuraLocalDbHelper.navigatorKey.currentContext!,
+                                      FinuraLocalDbHelper
+                                          .navigatorKey
+                                          .currentContext!,
                                     ).showSnackBar(
-                                      const SnackBar(content: Text('Login successful')),
+                                      const SnackBar(
+                                        content: Text('Login successful'),
+                                      ),
                                     );
                                   }
                                 });

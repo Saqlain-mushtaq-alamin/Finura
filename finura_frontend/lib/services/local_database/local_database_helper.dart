@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
 
 class FinuraLocalDbHelper {
   static final FinuraLocalDbHelper _instance = FinuraLocalDbHelper._internal();
@@ -14,7 +12,6 @@ class FinuraLocalDbHelper {
   static Database? _database;
 
   static var navigatorKey = GlobalKey<NavigatorState>();
-  static var sha256;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -24,24 +21,19 @@ class FinuraLocalDbHelper {
 
   Future<Database> _initDb() async {
     final dbPath = await getDatabasesPath();
-    final oldDbPath = join(dbPath, 'finura_local_db.db');
-    final newDbPath = join(dbPath, 'finura_local_database.db');
+    final dbFilePath = join(dbPath, 'finura_local_database.db');
 
-    // Delete old database if exists
-    if (await File(oldDbPath).exists()) {
-      await deleteDatabase(oldDbPath);
-    }
-    // Delete new database if exists (for recreation)
-    if (await File(newDbPath).exists()) {
-      await deleteDatabase(newDbPath);
-    }
+    // Ensure the directory exists
+    print('Using database at: $dbFilePath');
 
-    print('Database file path: $newDbPath');
-
-    return await openDatabase(newDbPath, version: 1, onCreate: _onCreate);
+    return await openDatabase(
+      dbFilePath,
+      version: 1,
+      onCreate: _onCreate,
+    );
   }
 
-  Future _onCreate(Database db, int version) async {
+  Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,9 +49,18 @@ class FinuraLocalDbHelper {
       )
     ''');
   }
-    // Method to fetch all users
+
   Future<List<Map<String, dynamic>>> getAllUsers() async {
     final db = await database;
-    return await db.query('user');  // Fetch all users from 'user' table
+    return await db.query('user');
+  }
+
+  // Optional: Dev-only reset method (call this manually if needed)
+  Future<void> resetDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final dbFilePath = join(dbPath, 'finura_local_database.db');
+    await deleteDatabase(dbFilePath);
+    _database = null; // Clear cached instance
+    print("Database has been reset.");
   }
 }
