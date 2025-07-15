@@ -1,7 +1,8 @@
-//import 'package:finura_frontend/views/finuraChatPage.dart';
+import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sqflite/sqflite.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatelessWidget {
@@ -12,11 +13,53 @@ class HomePage extends StatelessWidget {
   final TextEditingController amountController = TextEditingController();
   String? selectedOption;
 
+  
+  var user_Id;
+
   HomePage({
     Key? key,
     required this.userFirstName,
     required this.userProfilePicUrl,
+    required this.user_Id, // 👈 user_id from the user table
   }) : super(key: key);
+
+  Future<void> insertExpenseEntry({
+    required int userId, // 👈 user_id from the user table
+    required int mood, // 👈 1 to 5 mood rating
+    required String description, // 👈 description of the entry
+    required double amount, // 👈 transaction amount
+  }) async {
+    final db = await FinuraLocalDbHelper().database;
+    final now = DateTime.now();
+
+    // 🕒 Format date and time as strings
+    String date =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    String time =
+        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+    int day = now.weekday; // Dart: 1 = Monday, 7 = Sunday
+
+    // Optional: Custom day mapping (1 = Sat, 2 = Sun, etc.)
+    List<int> custom = [7, 1, 2, 3, 4, 5, 6];
+    int customDay = custom[day - 1];
+
+    await db.insert(
+      'expense_entry', // 👈 Your table name
+      {
+        'user_id': userId, // 👈 Foreign key to user table
+        'date': date, // 👈 Formatted date
+        'day': customDay, // 👈 Custom day format (if needed)
+        'time': time, // 👈 Time in "HH:mm"
+        'mood': mood, // 👈 1-5 mood rating
+        'description': description, // 👈 User-entered string
+        'expense_amount': amount, // 👈 Double value
+        'synced': 0, // 👈 Default is 0 (not synced)
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // Build method to create the HomePage UI
 
   @override
   Widget build(BuildContext context) {
@@ -140,8 +183,15 @@ class HomePage extends StatelessWidget {
                       ],
                       onChanged: (value) {
                         selectedOption = value;
-                        // Update the state or handle selection
-                        // Handle selection
+
+                        if (selectedOption == null) {
+                          // Show an error message if no option is selected
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please select an option.'),
+                            ),
+                          );
+                        }
                       },
                     ),
 
@@ -153,6 +203,34 @@ class HomePage extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           // Handle submit action
+                          if (selectedOption == "ExpenseOption") {
+                            // Handle Expense option
+                            if (categoryController.text.isNotEmpty &&
+                                amountController.text.isNotEmpty &&
+                                selectedOption != null) {
+                              // Call the insertExpenseEntry method
+                              insertExpenseEntry(
+                                userId: user_Id, // 👈 Pass the user_id
+                                mood: 3, //!replace it with  mood logical value
+                                description: categoryController.text,
+                                amount: double.parse(amountController.text),
+                              );
+
+                              // Clear the input fields after submission
+                              categoryController.clear();
+                              amountController.clear();
+                              selectedOption = null;
+                            } else {
+                              // Show an error message if fields are empty
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Please fill all fields.'),
+                                ),
+                              );
+                            }
+                          } else if (selectedOption == "IncomeOption") {
+                            // Handle Income option
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),

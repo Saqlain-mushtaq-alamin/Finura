@@ -1,5 +1,6 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
-import 'package:finura_frontend/views/HomePage.dart';
+
+import 'package:finura_frontend/views/loninPage/login.dart';
 import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
@@ -89,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-//removable
+  //removable
   // ignore: unused_element
   void _submit() {
     if (_formKey.currentState!.validate()) {
@@ -222,11 +223,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       );
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(
-                            userFirstName: _firstNameController.text.trim(), 
-                            userProfilePicUrl: _photo?.path ?? ''),
-                        ),
+                        MaterialPageRoute(builder: (context) => LoginPage()),
                       );
                     }
                   },

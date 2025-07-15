@@ -22,6 +22,17 @@ class LoginPage extends StatelessWidget {
       whereArgs: [accountName],
       limit: 1,
     );
+    print('User fetched: $user');
+
+    // Fetch user_id by accountName
+    final userId = await db.query(
+      'user',
+      columns: ['id'],
+      where: 'email = ?',
+      whereArgs: [accountName],
+      limit: 1,
+    );
+    print('User ID fetched: $userId');
 
     // Check if user exists
     if (user.isEmpty) {
@@ -58,6 +69,7 @@ class LoginPage extends StatelessWidget {
                 'Guest', // Use the firstName value or fallback to 'Guest'
             userProfilePicUrl:
                 userPhoto ?? '', // Use userPhoto or fallback to an empty string
+            user_Id: userId.isNotEmpty ? userId.first['id'] as int : 0, // Get user_id
           ),
         ),
       );
@@ -208,6 +220,7 @@ class LoginPage extends StatelessWidget {
                                       userFirstName: 'User', //user's first name
                                       userProfilePicUrl: // user's profile picture URL or default picture
                                           'https://example.com/profile.jpg',
+                                      user_Id: 0, // Placeholder for user_id 
                                     ),
                                   ),
                                 );
