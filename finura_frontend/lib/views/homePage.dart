@@ -13,7 +13,6 @@ class HomePage extends StatelessWidget {
   final TextEditingController amountController = TextEditingController();
   String? selectedOption;
 
-  
   var user_Id;
 
   HomePage({
@@ -42,21 +41,25 @@ class HomePage extends StatelessWidget {
     // Optional: Custom day mapping (1 = Sat, 2 = Sun, etc.)
     List<int> custom = [7, 1, 2, 3, 4, 5, 6];
     int customDay = custom[day - 1];
-
-    await db.insert(
-      'expense_entry', // 👈 Your table name
-      {
-        'user_id': userId, // 👈 Foreign key to user table
-        'date': date, // 👈 Formatted date
-        'day': customDay, // 👈 Custom day format (if needed)
-        'time': time, // 👈 Time in "HH:mm"
-        'mood': mood, // 👈 1-5 mood rating
-        'description': description, // 👈 User-entered string
-        'expense_amount': amount, // 👈 Double value
-        'synced': 0, // 👈 Default is 0 (not synced)
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    try {
+      await db.insert(
+        'expense_entry', // 👈 Your table name
+        {
+          'user_id': userId, // 👈 Foreign key to user table
+          'date': date, // 👈 Formatted date
+          'day': customDay, // 👈 Custom day format (if needed)
+          'time': time, // 👈 Time in "HH:mm"
+          'mood': mood, // 👈 1-5 mood rating
+          'description': description, // 👈 User-entered string
+          'expense_amount': amount, // 👈 Double value
+          'synced': 0, // 👈 Default is 0 (not synced)
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      print('Expense entry inserted successfully.');
+    } catch (e) {
+      print('Error inserting expense entry: $e');
+    }
   }
 
   // Build method to create the HomePage UI

@@ -26,11 +26,16 @@ class FinuraLocalDbHelper {
     // Ensure the directory exists
     print('Using database at: $dbFilePath');
 
-    return await openDatabase(dbFilePath, version: 1, onCreate: _onCreate);
+    return await openDatabase(
+      dbFilePath,
+      version: 2,
+      onCreate: _onCreate,
+      //onUpgrade: _onUpgrade,
+    );
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''
+        await db.execute('''
       CREATE TABLE user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         pin_hash TEXT NOT NULL,
@@ -60,11 +65,27 @@ class FinuraLocalDbHelper {
       FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
     )
   ''');
+    print('Database created with expense_entry table.');
   }
+
+ // Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+   // print('⬆️ Upgrading database from $oldVersion to $newVersion...');
+   // await db.execute('DROP TABLE IF EXISTS expense_entry');
+    //await _onCreate(db, newVersion);
+  //}
 
   Future<List<Map<String, dynamic>>> getAllUsers() async {
     final db = await database;
     return await db.query('user');
+  }
+
+  // Optional: helper to debug tables
+  Future<void> debugPrintTables() async {
+    final db = await database;
+    final tables = await db.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type='table'",
+    );
+    print("📋 Tables in DB: $tables");
   }
 
   // Optional: Dev-only reset method (call this manually if needed)
