@@ -26,11 +26,7 @@ class FinuraLocalDbHelper {
     // Ensure the directory exists
     print('Using database at: $dbFilePath');
 
-    return await openDatabase(
-      dbFilePath,
-      version: 1,
-      onCreate: _onCreate,
-    );
+    return await openDatabase(dbFilePath, version: 1, onCreate: _onCreate);
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -48,6 +44,22 @@ class FinuraLocalDbHelper {
         data_status TEXT
       )
     ''');
+
+    // 🚨 New table for expense tracking
+    await db.execute('''
+    CREATE TABLE expense_entry (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      date TEXT NOT NULL,
+      day INTEGER NOT NULL,
+      time TEXT NOT NULL,
+      mood INTEGER NOT NULL CHECK(mood BETWEEN 0 AND 5),
+      description TEXT,
+      expense_amount REAL NOT NULL,
+      synced INTEGER NOT NULL DEFAULT 0,
+      FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+    )
+  ''');
   }
 
   Future<List<Map<String, dynamic>>> getAllUsers() async {
