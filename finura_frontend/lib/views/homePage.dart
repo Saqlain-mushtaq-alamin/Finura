@@ -13,7 +13,8 @@ class HomePage extends StatelessWidget {
   final TextEditingController amountController = TextEditingController();
   String? selectedOption;
 
-  var user_Id;
+  var user_Id;// 👈 user_id from the user table
+  
 
   HomePage({
     Key? key,
@@ -22,6 +23,48 @@ class HomePage extends StatelessWidget {
     required this.user_Id, // 👈 user_id from the user table
   }) : super(key: key);
 
+  Future<void> insertIncomeEntry({
+    required int userId, // 👈 user_id from the user table
+    required int mood, // 👈 1 to 5 mood rating
+    required String category, // 👈 category of the income
+    required double amount, // 👈 transaction amount
+  }) async {
+    final db = await FinuraLocalDbHelper().database;
+    final now = DateTime.now();
+
+    // 🕒 Format date and time as strings
+    String date =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    String time =
+        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+    int day = now.weekday; // Dart: 1 = Monday, 7 = Sunday
+
+    // Optional: Custom day mapping (1 = Sat, 2 = Sun, etc.)
+    List<int> custom = [7, 1, 2, 3, 4, 5, 6];
+    int customDay = custom[day - 1];
+
+    try {
+      await db.insert(
+        'income_entry', // 👈 Your table name
+        {
+          'user_id': userId, // 👈 Foreign key to user table
+          'date': date, // 👈 Formatted date
+          'day': customDay, // 👈 Custom day format (if needed)
+          'time': time, // 👈 Time in "HH:mm"
+          'mood': mood, // 👈 Placeholder mood value (0-5)
+          'description': category, // 👈 Income category
+          'income_amount': amount, // 👈 Double value
+          'synced': 0, // 👈 Default is 0 (not synced)
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      print('Income entry inserted successfully.');
+    } catch (e) {
+      print('Error inserting income entry: $e');
+    }
+  }
+
+  // Function to insert an expense entry into the database
   Future<void> insertExpenseEntry({
     required int userId, // 👈 user_id from the user table
     required int mood, // 👈 1 to 5 mood rating
@@ -239,6 +282,35 @@ class HomePage extends StatelessWidget {
                             }
                           } else if (selectedOption == "IncomeOption") {
                             // Handle Income option
+                            if (categoryController.text.isNotEmpty &&
+                                amountController.text.isNotEmpty &&
+                                selectedOption != null) {
+                              // Call the insertIncomeEntry method
+                              insertIncomeEntry(
+                                userId: user_Id, // 👈 Pass the user_id
+                                mood: 3, //!replace it with mood logical value
+                                category: categoryController.text,
+                                amount: double.parse(amountController.text),
+                              );
+
+                              // Clear the input fields after submission
+                              categoryController.clear();
+                              amountController.clear();
+                              selectedOption = null;
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Income entry submitted!'),
+                                ),
+                              );
+                            } else {
+                              // Show an error message if fields are empty
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Please fill all fields.'),
+                                ),
+                              );
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
