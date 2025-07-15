@@ -28,14 +28,14 @@ class FinuraLocalDbHelper {
 
     return await openDatabase(
       dbFilePath,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
-      //onUpgrade: _onUpgrade,
+      onUpgrade: _onUpgrade,
     );
   }
 
   Future<void> _onCreate(Database db, int version) async {
-        await db.execute('''
+    await db.execute('''
       CREATE TABLE user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         pin_hash TEXT NOT NULL,
@@ -65,14 +65,65 @@ class FinuraLocalDbHelper {
       FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
     )
   ''');
+
+    //table for income tracking
+    await db.execute('''
+      CREATE TABLE income_entry (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        date TEXT NOT NULL,
+        day INTEGER NOT NULL,
+        time TEXT NOT NULL,
+        mood INTEGER NOT NULL CHECK(mood BETWEEN 0 AND 5),
+        description TEXT,
+        income_amount REAL NOT NULL,
+        synced INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+      )
+    ''');
+
+
     print('Database created with expense_entry table.');
   }
 
- // Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-   // print('⬆️ Upgrading database from $oldVersion to $newVersion...');
-   // await db.execute('DROP TABLE IF EXISTS expense_entry');
-    //await _onCreate(db, newVersion);
-  //}
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Add any upgrade logic for version 2
+          await db.execute('''
+    CREATE TABLE expense_entry (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      date TEXT NOT NULL,
+      day INTEGER NOT NULL,
+      time TEXT NOT NULL,
+      mood INTEGER NOT NULL CHECK(mood BETWEEN 0 AND 5),
+      description TEXT,
+      expense_amount REAL NOT NULL,
+      synced INTEGER NOT NULL DEFAULT 0,
+      FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+    )
+  ''');
+      
+    }
+    if (oldVersion < 3) {
+      // Add any upgrade logic for version 3
+      await db.execute('''
+        CREATE TABLE income_entry (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          date TEXT NOT NULL,
+          day INTEGER NOT NULL,
+          time TEXT NOT NULL,
+          mood INTEGER NOT NULL CHECK(mood BETWEEN 0 AND 5),
+          description TEXT,
+          income_amount REAL NOT NULL,
+          synced INTEGER NOT NULL DEFAULT 0,
+          FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+        )
+      ''');
+    }
+    print('Database upgraded from version $oldVersion to $newVersion.');
+  }
 
   Future<List<Map<String, dynamic>>> getAllUsers() async {
     final db = await database;

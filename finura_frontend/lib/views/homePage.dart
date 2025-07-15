@@ -223,6 +223,12 @@ class HomePage extends StatelessWidget {
                               categoryController.clear();
                               amountController.clear();
                               selectedOption = null;
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Expense entry submitted!'),
+                                ),
+                              );
                             } else {
                               // Show an error message if fields are empty
                               ScaffoldMessenger.of(context).showSnackBar(
