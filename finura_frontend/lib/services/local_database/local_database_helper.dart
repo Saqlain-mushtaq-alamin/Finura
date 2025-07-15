@@ -147,4 +147,8 @@ class FinuraLocalDbHelper {
     _database = null; // Clear cached instance
     print("Database has been reset.");
   }
+
+  static Future getAllIncome(int i) async {}
+
+  static Future getAllExpenses() async {}
 }

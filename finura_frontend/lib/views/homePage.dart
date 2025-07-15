@@ -1,5 +1,6 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
+import 'package:finura_frontend/views/historyPage/historyPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
@@ -13,8 +14,7 @@ class HomePage extends StatelessWidget {
   final TextEditingController amountController = TextEditingController();
   String? selectedOption;
 
-  var user_Id;// 👈 user_id from the user table
-  
+  var user_Id; // 👈 user_id from the user table
 
   HomePage({
     Key? key,
@@ -421,6 +421,12 @@ class HomePage extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           print("Icon 4 tapped"); //?need to change this
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HistoryPage(),
+                            ),
+                          );
                         },
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
