@@ -24,10 +24,10 @@ class HomePage extends StatelessWidget {
   }) : super(key: key);
 
   Future<void> insertIncomeEntry({
-    required int userId, // 👈 user_id from the user table
-    required int mood, // 👈 1 to 5 mood rating
-    required String category, // 👈 category of the income
-    required double amount, // 👈 transaction amount
+    required int userId, 
+    required int mood, 
+    required String category, 
+    required double amount, 
   }) async {
     final db = await FinuraLocalDbHelper().database;
     final now = DateTime.now();
@@ -66,10 +66,10 @@ class HomePage extends StatelessWidget {
 
   // Function to insert an expense entry into the database
   Future<void> insertExpenseEntry({
-    required int userId, // 👈 user_id from the user table
-    required int mood, // 👈 1 to 5 mood rating
-    required String description, // 👈 description of the entry
-    required double amount, // 👈 transaction amount
+    required int userId, 
+    required int mood, 
+    required String description, 
+    required double amount, 
   }) async {
     final db = await FinuraLocalDbHelper().database;
     final now = DateTime.now();
@@ -424,7 +424,7 @@ class HomePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HistoryPage(),
+                              builder: (context) => HistoryPage(userId: user_Id,),
                             ),
                           );
                         },

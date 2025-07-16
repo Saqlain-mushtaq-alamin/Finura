@@ -1,6 +1,6 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
+
 import 'package:intl/intl.dart';
 
 class Transaction {
@@ -20,7 +20,9 @@ class Transaction {
 }
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({Key? key}) : super(key: key);
+  final dynamic userId;
+
+  const HistoryPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -69,29 +71,31 @@ class _HistoryPageState extends State<HistoryPage> {
     // Fetch income and expense entries from the database
 
     // Replace with your actual DB calls
-    final incomeList = await getAllExpenses(1);
-    final expenseList = await getAllIncome(1);
+   final incomeList = await getAllIncome(widget.userId);  // ✅ Correct
+final expenseList = await getAllExpenses(widget.userId);  // ✅ Correct
 
     final allTxns = [
-      ...incomeList.map(
-        (i) => Transaction(
-          id: i['id'],
-          category: i['description'] ?? 'Income',
-          amount: i['income_amount'],
-          dateTime: DateTime.parse("${i['date']} ${i['time']}"),
-          isIncome: true,
-        ),
-      ),
+// Income entries
+...incomeList.map(
+  (i) => Transaction(
+    id: i['id'],
+    category: i['description'] ?? 'Income',
+    amount: (i['income_amount'] ?? 0).toDouble(), // ✅ now this works
+    dateTime: DateTime.parse("${i['date']} ${i['time']}"),
+    isIncome: true,
+  ),
+),
+// Expense entries
+...expenseList.map(
+  (e) => Transaction(
+    id: e['id'],
+    category: e['description'] ?? 'Expense',
+    amount: (e['expense_amount'] ?? 0).toDouble(), // ✅ now this works
+    dateTime: DateTime.parse("${e['date']} ${e['time']}"),
+    isIncome: false,
+  ),
+),
 
-      ...expenseList.map(
-        (e) => Transaction(
-          id: e['id'],
-          category: e['description'] ?? 'Expense',
-          amount: e['expense_amount'],
-          dateTime: DateTime.parse("${e['date']} ${e['time']}"),
-          isIncome: false,
-        ),
-      ),
     ];
 
     // Sort by most recent
@@ -166,6 +170,4 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
     );
   }
-  
-
 }
