@@ -28,7 +28,7 @@ class FinuraLocalDbHelper {
 
     return await openDatabase(
       dbFilePath,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -82,6 +82,34 @@ class FinuraLocalDbHelper {
       )
     ''');
 
+    // Table for saving goals
+    await db.execute('''
+      CREATE TABLE saving_goal (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        target_amount REAL NOT NULL,
+        frequency TEXT NOT NULL CHECK(frequency IN ('daily', 'weekly', 'monthly')),
+        start_date TEXT NOT NULL,
+        end_date TEXT,
+        current_saved REAL NOT NULL DEFAULT 0,
+        description TEXT,
+        synced INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+      )
+    ''');
+
+    // Table for note enrtes
+    await db.execute('''
+      CREATE TABLE note_entry (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+      )
+    ''');
 
     print('Database created with expense_entry table.');
   }
@@ -89,7 +117,7 @@ class FinuraLocalDbHelper {
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       // Add any upgrade logic for version 2
-          await db.execute('''
+      await db.execute('''
     CREATE TABLE expense_entry (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
@@ -103,7 +131,6 @@ class FinuraLocalDbHelper {
       FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
     )
   ''');
-      
     }
     if (oldVersion < 3) {
       // Add any upgrade logic for version 3
@@ -121,6 +148,34 @@ class FinuraLocalDbHelper {
           FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
         )
       ''');
+    }
+    if (oldVersion < 4) {
+      await db.execute('''
+      CREATE TABLE saving_goal (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        target_amount REAL NOT NULL,
+        frequency TEXT NOT NULL CHECK(frequency IN ('daily', 'weekly', 'monthly')),
+        start_date TEXT NOT NULL,
+        end_date TEXT,
+        current_saved REAL NOT NULL DEFAULT 0,
+        description TEXT,
+        synced INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+      )
+    ''');
+
+      await db.execute('''
+      CREATE TABLE note_entry (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+      )
+    ''');
     }
     print('Database upgraded from version $oldVersion to $newVersion.');
   }
@@ -147,8 +202,4 @@ class FinuraLocalDbHelper {
     _database = null; // Clear cached instance
     print("Database has been reset.");
   }
-
-  static Future getAllIncome(int i) async {}
-
-  static Future getAllExpenses() async {}
 }

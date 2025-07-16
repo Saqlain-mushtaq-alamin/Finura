@@ -69,33 +69,34 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future<void> _loadTransactions() async {
     // Fetch income and expense entries from the database
-
+    //!fixed order cont replace wiht each other
     // Replace with your actual DB calls
-   final incomeList = await getAllIncome(widget.userId);  // ✅ Correct
-final expenseList = await getAllExpenses(widget.userId);  // ✅ Correct
+    final incomeList = await getAllIncome(
+      widget.userId,
+    ); 
+    final expenseList = await getAllExpenses(widget.userId);
 
     final allTxns = [
-// Income entries
-...incomeList.map(
-  (i) => Transaction(
-    id: i['id'],
-    category: i['description'] ?? 'Income',
-    amount: (i['income_amount'] ?? 0).toDouble(), // ✅ now this works
-    dateTime: DateTime.parse("${i['date']} ${i['time']}"),
-    isIncome: true,
-  ),
-),
-// Expense entries
-...expenseList.map(
-  (e) => Transaction(
-    id: e['id'],
-    category: e['description'] ?? 'Expense',
-    amount: (e['expense_amount'] ?? 0).toDouble(), // ✅ now this works
-    dateTime: DateTime.parse("${e['date']} ${e['time']}"),
-    isIncome: false,
-  ),
-),
-
+      // Income entries
+      ...incomeList.map(
+        (i) => Transaction(
+          id: i['id'],
+          category: i['description'] ?? 'Income',
+          amount: (i['income_amount'] ?? 0).toDouble(), // ✅ now this works
+          dateTime: DateTime.parse("${i['date']} ${i['time']}"),
+          isIncome: true,
+        ),
+      ),
+      // Expense entries
+      ...expenseList.map(
+        (e) => Transaction(
+          id: e['id'],
+          category: e['description'] ?? 'Expense',
+          amount: (e['expense_amount'] ?? 0).toDouble(), // ✅ now this works
+          dateTime: DateTime.parse("${e['date']} ${e['time']}"),
+          isIncome: false,
+        ),
+      ),
     ];
 
     // Sort by most recent
@@ -159,15 +160,35 @@ final expenseList = await getAllExpenses(widget.userId);  // ✅ Correct
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('History')),
-      body: _transactions.isEmpty
-          ? const Center(child: Text('No transactions yet.'))
-          : ListView.separated(
-              itemCount: _transactions.length,
-              itemBuilder: (context, index) =>
-                  _buildTransactionItem(_transactions[index]),
-              separatorBuilder: (_, __) => const Divider(),
+      appBar: AppBar(
+        title: const Text('History'),
+        backgroundColor: const Color.fromARGB(255, 164, 245, 171),
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(16),
+
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3), // changes position of shadow
             ),
+          ],
+        ),
+
+        child: _transactions.isEmpty
+            ? const Center(child: Text('No transactions yet.'))
+            : ListView.separated(
+                itemCount: _transactions.length,
+                itemBuilder: (context, index) =>
+                    _buildTransactionItem(_transactions[index]),
+                separatorBuilder: (_, __) => const Divider(),
+              ),
+      ),
     );
   }
 }
