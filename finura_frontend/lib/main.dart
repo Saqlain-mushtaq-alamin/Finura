@@ -1,8 +1,14 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
+import 'package:finura_frontend/services/server%20connection/sync__service.dart';
 import 'package:finura_frontend/views/loninPage/login.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 🔥 Start sync right on app startup
+  await SyncService.syncAll();
+
   runApp(const MyApp());
 }
 
@@ -21,10 +27,9 @@ class MyApp extends StatelessWidget {
         ),
       ),
       navigatorKey: FinuraLocalDbHelper.navigatorKey,
+
       //debugShowCheckedModeBanner: false,
-     
       home: LoginPage(),
     );
   }
 }
-
