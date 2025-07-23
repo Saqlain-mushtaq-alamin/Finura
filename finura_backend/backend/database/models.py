@@ -1,4 +1,4 @@
-# backend/models.py
+# models.py
 from sqlalchemy import Column, Integer, String, Float, Text
 from database import Base
 

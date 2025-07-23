@@ -1,8 +1,11 @@
-# backend/main.py
+#main.py
 from fastapi import FastAPI, Depends
+from sqlalchemy import engine
 from sqlalchemy.orm import Session
-from database import SessionLocal, engine
-import models, schemas, crud
+
+
+from backend.database import models, schemas, crud
+from backend.database.database import SessionLocal,engine
 
 models.Base.metadata.create_all(bind=engine)
 
