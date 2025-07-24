@@ -1,6 +1,7 @@
 # ml_models/classifier.py
 import joblib
 
+
 # 🔥 Load  trained model
 vectorizer = joblib.load("tfidf_vectorizer.joblib")
 model = joblib.load("logistic_model.joblib")

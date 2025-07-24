@@ -5,10 +5,6 @@ import models, schemas
 from ml_models.classifier.classifier import predict_category
 
 
-
-
-
-
 def create_user(db: Session, user: schemas.UserCreate):
     db_user = models.User(**user.dict())
     db.merge(db_user)  # handles insert or update by primary key
