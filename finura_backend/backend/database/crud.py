@@ -1,7 +1,11 @@
 # crud.py
 from sqlalchemy.orm import Session
 import models, schemas
-from ml_models.classifier import predict_category
+#from ml_models.classifier import predict_category
+from ml_models.classifier.classifier import predict_category
+
+
+
 
 
 
