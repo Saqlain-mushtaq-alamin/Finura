@@ -1,11 +1,9 @@
 #main.py
 from fastapi import FastAPI, Depends
+from requests import Session
 from sqlalchemy import engine
-from sqlalchemy.orm import Session
-
-
-from backend.database import models, schemas, crud
-from backend.database.database import SessionLocal,engine
+from backend.database import SessionLocal, engine
+from backend.database import crud, models, schemas
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -19,17 +17,17 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/sync_user")
+@app.post("/")#sync_user
 def sync_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     crud.create_user(db, user)
     return {"message": "User synced!"}
 
-@app.post("/sync_expense")
+@app.post("/")#sync_expense
 def sync_expense(expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
     crud.create_expense(db, expense)
     return {"message": "Expense synced!"}
 
-@app.post("/sync_income")
+@app.post("/")#sync_income
 def sync_income(income: schemas.IncomeCreate, db: Session = Depends(get_db)):
     crud.create_income(db, income)
     return {"message": "Income synced!"}

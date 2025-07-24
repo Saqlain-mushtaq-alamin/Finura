@@ -1,8 +1,8 @@
 # crud.py
 from sqlalchemy.orm import Session
-import models, schemas
+from backend.database import models, schemas
 #from ml_models.classifier import predict_category
-from ml_models.classifier.classifier import predict_category
+from backend.ml_models.classifier.classifier import predict_category
 
 
 def create_user(db: Session, user: schemas.UserCreate):
