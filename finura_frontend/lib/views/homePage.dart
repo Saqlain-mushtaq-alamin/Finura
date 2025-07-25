@@ -1,5 +1,6 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
+import 'package:finura_frontend/views/helpPage/help.dart';
 import 'package:finura_frontend/views/historyPage/historyPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,10 +25,10 @@ class HomePage extends StatelessWidget {
   }) : super(key: key);
 
   Future<void> insertIncomeEntry({
-    required int userId, 
-    required int mood, 
-    required String category, 
-    required double amount, 
+    required int userId,
+    required int mood,
+    required String category,
+    required double amount,
   }) async {
     final db = await FinuraLocalDbHelper().database;
     final now = DateTime.now();
@@ -66,10 +67,10 @@ class HomePage extends StatelessWidget {
 
   // Function to insert an expense entry into the database
   Future<void> insertExpenseEntry({
-    required int userId, 
-    required int mood, 
-    required String description, 
-    required double amount, 
+    required int userId,
+    required int mood,
+    required String description,
+    required double amount,
   }) async {
     final db = await FinuraLocalDbHelper().database;
     final now = DateTime.now();
@@ -424,7 +425,8 @@ class HomePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HistoryPage(userId: user_Id,),
+                              builder: (context) =>
+                                  HistoryPage(userId: user_Id),
                             ),
                           );
                         },
@@ -491,6 +493,12 @@ class HomePage extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           print("Icon 7 tapped"); //?need to change this
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GetHelpPage(),
+                            ),
+                          );
                         },
                         child: Column(
                           mainAxisSize: MainAxisSize.min,

@@ -25,6 +25,7 @@ class SyncService {
     for (var user in users) {
       final success = await _postToAPI('/sync_user', user);
       if (success) {
+        print("✅ Synced user: ${user['name']}");
         await db.update(
           'user',
           {'data_status': 'uploaded'},
@@ -39,6 +40,8 @@ class SyncService {
     for (var item in expenses) {
       final success = await _postToAPI('/sync_expense', item);
       if (success) {
+        print("✅ Synced expense: ${item['title']}");
+         // Update the synced status in the database
         await db.update(
           'expense_entry',
           {'synced': 1},
@@ -53,6 +56,8 @@ class SyncService {
     for (var item in incomes) {
       final success = await _postToAPI('/sync_income', item);
       if (success) {
+        print("✅ Synced income: ${item['title']}");
+        // Update the synced status in the database
         await db.update(
           'income_entry',
           {'synced': 1},
@@ -67,6 +72,8 @@ class SyncService {
     for (var item in goals) {
       final success = await _postToAPI('/sync_goal', item);
       if (success) {
+        print("✅ Synced saving goal: ${item['title']}");
+        // Update the synced status in the database
         await db.update(
           'saving_goal',
           {'synced': 1},
