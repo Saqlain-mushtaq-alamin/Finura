@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+//import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class GetHelpPage extends StatefulWidget {
   @override
@@ -46,6 +47,8 @@ class _GetHelpPageState extends State<GetHelpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 164, 245, 171),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Align(alignment: Alignment.centerLeft, child: Text('Get Help')),
         actions: [
           IconButton(icon: Icon(Icons.call), onPressed: _makePhoneCall),
@@ -73,7 +76,7 @@ class _GetHelpPageState extends State<GetHelpPage> {
                 'How can we help you?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 60),
 
               // Your TextField and button go here
               TextField(
@@ -89,6 +92,41 @@ class _GetHelpPageState extends State<GetHelpPage> {
               ),
               SizedBox(height: 12),
               ElevatedButton(onPressed: _sendEmail, child: Text('Submit')),
+
+              SizedBox(height: 12),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 8,
+        color: const Color.fromARGB(255, 164, 245, 171),
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // QR Scanner icon (left)
+              IconButton(
+                icon: const Icon(Icons.qr_code_scanner, size: 28),
+                onPressed: () {
+                  // Handle QR scanner tap
+                },
+              ),
+              // Home icon (center)
+              IconButton(
+                icon: const Icon(Icons.home, size: 32),
+                onPressed: () {
+                  // Handle home tap
+                },
+              ),
+              // Notification icon (right)
+              IconButton(
+                icon: const Icon(Icons.notifications, size: 28),
+                onPressed: () {
+                  // Handle notification tap
+                },
+              ),
             ],
           ),
         ),
