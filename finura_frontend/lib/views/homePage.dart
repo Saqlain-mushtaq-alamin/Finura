@@ -1,4 +1,5 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
+import 'package:finura_frontend/views/calendarPage/calendar.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:finura_frontend/views/helpPage/help.dart';
 import 'package:finura_frontend/views/historyPage/historyPage.dart';
@@ -472,6 +473,12 @@ class HomePage extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           print("Icon 6 tapped"); //?need to change this
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CalendarPage(),
+                            ),
+                          );
                         },
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
