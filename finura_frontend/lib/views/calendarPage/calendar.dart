@@ -38,7 +38,7 @@ class _CalendarPageState extends State<CalendarPage> {
         ],
       ),
 
-      body: Container(
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
