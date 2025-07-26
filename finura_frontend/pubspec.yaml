@@ -70,7 +70,7 @@ flutter:
   assets:
      - assets/icons/
      - assets/finura_icon.webp
-     - assets/default_user
+     - assets/default_user/
      
 
 

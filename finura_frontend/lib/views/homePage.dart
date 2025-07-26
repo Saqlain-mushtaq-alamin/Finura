@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:finura_frontend/views/calendarPage/calendar.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
@@ -19,11 +21,23 @@ class HomePage extends StatelessWidget {
   var user_Id; // 👈 user_id from the user table
 
   HomePage({
-    Key? key,
+    super.key,
     required this.userFirstName,
     required this.userProfilePicUrl,
     required this.user_Id, // 👈 user_id from the user table
-  }) : super(key: key);
+  });
+
+  ImageProvider _buildImageProvider(String path) {
+    if (path.startsWith('http')) {
+      return NetworkImage(path);
+    } else if (path.startsWith('/')) {
+      return FileImage(File(path));
+    } else if (path.startsWith('assets/')) {
+      return AssetImage(path);
+    } else {
+      return const AssetImage('assets/default_user/fallback.jpg');
+    }
+  }
 
   Future<void> insertIncomeEntry({
     required int userId,
@@ -122,16 +136,27 @@ class HomePage extends StatelessWidget {
             // User profile picture
             Padding(
               padding: const EdgeInsets.only(left: 20.0, right: 16.0),
-              child: CircleAvatar(
-                radius: 20,
-                backgroundImage: NetworkImage(
-                  userProfilePicUrl,
-                ), // Replace with a local asset if needed
-                backgroundColor: Colors.grey[200],
+
+              child: ClipOval(
+
+                child: SizedBox(
+                  width: 40,
+                  height: 40,
+
+                  child: Image(
+                    image: _buildImageProvider(userProfilePicUrl),
+                    fit: BoxFit.cover,
+
+                  ),
+                ),
               ),
             ),
+
+
+
             // User first name
             Text(
+              
               userFirstName,
               style: const TextStyle(
                 color: Colors.black,
@@ -771,7 +796,6 @@ class HomePage extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   print("Scan Icon tapped"); //?need to change this
-                  
                 },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
