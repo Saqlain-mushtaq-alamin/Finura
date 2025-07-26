@@ -141,11 +141,31 @@ class HomePage extends StatelessWidget {
             ),
             const Spacer(),
             // Target icon (rightmost)
-            IconButton(
-              icon: const Icon(Icons.track_changes, color: Colors.black),
-              onPressed: () {
-                // Handle target icon tap
-              },
+            Padding(
+              padding: const EdgeInsets.only(
+                right: 35.0,
+                left: 16.0,
+                top: 8.0,
+                bottom: 8.0,
+              ),
+
+              child: GestureDetector(
+                onTap: () {
+                  print("AppBaar Icon tapped"); //?need to change this
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Center(
+                      child: Image.asset(
+                        'assets/icons/trophy.png',
+                        width: 38,
+                        height: 38,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
