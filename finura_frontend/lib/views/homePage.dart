@@ -738,25 +738,47 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               // QR Scanner icon (left)
-              IconButton(
-                icon: const Icon(Icons.qr_code_scanner, size: 28),
-                onPressed: () {
-                  // Handle QR scanner tap
+              GestureDetector(
+                onTap: () {
+                  print("Scan Icon tapped"); //?need to change this
                 },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset('assets/icons/scan.png', width: 28, height: 28),
+                  ],
+                ),
               ),
               // Home icon (center)
-              IconButton(
-                icon: const Icon(Icons.home, size: 32),
-                onPressed: () {
-                  // Handle home tap
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FinuraChatPage()),
+                  );
                 },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircleAvatar(
+                      radius: 25,
+                      backgroundImage: AssetImage('assets/finura_icon.webp'),
+                    ),
+                  ],
+                ),
               ),
               // Notification icon (right)
-              IconButton(
-                icon: const Icon(Icons.notifications, size: 28),
-                onPressed: () {
-                  // Handle notification tap
+              GestureDetector(
+                onTap: () {
+                  print("Scan Icon tapped"); //?need to change this
+                  
                 },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset('assets/icons/bell.png', width: 28, height: 28),
+                  ],
+                ),
               ),
             ],
           ),
