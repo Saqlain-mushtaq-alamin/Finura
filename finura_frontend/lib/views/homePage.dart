@@ -10,13 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 
 // ignore: must_be_immutable
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final String userFirstName;
   final String userProfilePicUrl;
-
-  final TextEditingController categoryController = TextEditingController();
-  final TextEditingController amountController = TextEditingController();
-  String? selectedOption;
 
   var user_Id; // 👈 user_id from the user table
 
@@ -26,6 +22,18 @@ class HomePage extends StatelessWidget {
     required this.userProfilePicUrl,
     required this.user_Id, // 👈 user_id from the user table
   });
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final TextEditingController categoryController = TextEditingController();
+
+  final TextEditingController amountController = TextEditingController();
+  int selectedMood = 0;
+
+  String? selectedOption;
 
   ImageProvider _buildImageProvider(String path) {
     if (path.startsWith('http')) {
@@ -122,7 +130,6 @@ class HomePage extends StatelessWidget {
   }
 
   // Build method to create the HomePage UI
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,26 +145,21 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.only(left: 20.0, right: 16.0),
 
               child: ClipOval(
-
                 child: SizedBox(
                   width: 40,
                   height: 40,
 
                   child: Image(
-                    image: _buildImageProvider(userProfilePicUrl),
+                    image: _buildImageProvider(widget.userProfilePicUrl),
                     fit: BoxFit.cover,
-
                   ),
                 ),
               ),
             ),
 
-
-
             // User first name
             Text(
-              
-              userFirstName,
+              widget.userFirstName,
               style: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.w600,
@@ -288,6 +290,45 @@ class HomePage extends StatelessWidget {
                       },
                     ),
 
+                    // Emoji Rating Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: List.generate(5, (index) {
+                        // Mapping emoji and mood value
+                        final emojiList = ["😢", "🫠", "😤", "😌", "🥳"];
+                        final moodValue = index + 1;
+
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedMood = moodValue;
+                            });
+                          },
+                          onLongPress: () async {
+                            setState(() {
+                              selectedMood = 0; // Deselect
+                            });
+
+                            // Optional: Play sound (requires audioplayers or similar package)
+                            // await AudioPlayer().play(AssetSource('sounds/unselect.mp3'));
+                          },
+                          child: AnimatedScale(
+                            duration: const Duration(milliseconds: 200),
+                            scale: selectedMood == moodValue ? 1.4 : 1.0,
+                            child: Text(
+                              emojiList[index],
+                              style: TextStyle(
+                                fontSize: 32,
+                                color: selectedMood == moodValue
+                                    ? Colors.blueAccent
+                                    : Colors.black,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+
                     //submit button
                     const SizedBox(height: 8),
                     SizedBox(
@@ -296,15 +337,16 @@ class HomePage extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           // Handle submit action
-                          if (selectedOption == "ExpenseOption") {
-                            // Handle Expense option
-                            if (categoryController.text.isNotEmpty &&
-                                amountController.text.isNotEmpty &&
-                                selectedOption != null) {
+                          if (categoryController.text.isNotEmpty &&
+                              amountController.text.isNotEmpty) {
+                            if (selectedOption == "ExpenseOption") {
+                              // Handle Expense option
+
                               // Call the insertExpenseEntry method
                               insertExpenseEntry(
-                                userId: user_Id, // 👈 Pass the user_id
-                                mood: 3, //!replace it with  mood logical value
+                                userId: widget.user_Id, // 👈 Pass the user_id
+                                mood:
+                                    selectedMood, //!replace it with  mood logical value
                                 description: categoryController.text,
                                 amount: double.parse(amountController.text),
                               );
@@ -313,29 +355,24 @@ class HomePage extends StatelessWidget {
                               categoryController.clear();
                               amountController.clear();
                               selectedOption = null;
+                              setState(() {
+                                selectedMood =
+                                    0; // 👈 Unselect emoji after submit
+                              });
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Expense entry submitted!'),
                                 ),
                               );
-                            } else {
-                              // Show an error message if fields are empty
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Please fill all fields.'),
-                                ),
-                              );
-                            }
-                          } else if (selectedOption == "IncomeOption") {
-                            // Handle Income option
-                            if (categoryController.text.isNotEmpty &&
-                                amountController.text.isNotEmpty &&
-                                selectedOption != null) {
+                            } else if (selectedOption == "IncomeOption") {
+                              // Handle Income option
+
                               // Call the insertIncomeEntry method
                               insertIncomeEntry(
-                                userId: user_Id, // 👈 Pass the user_id
-                                mood: 3, //!replace it with mood logical value
+                                userId: widget.user_Id, // 👈 Pass the user_id
+                                mood:
+                                    selectedMood, //!replace it with mood logical value
                                 category: categoryController.text,
                                 amount: double.parse(amountController.text),
                               );
@@ -344,6 +381,10 @@ class HomePage extends StatelessWidget {
                               categoryController.clear();
                               amountController.clear();
                               selectedOption = null;
+                              setState(() {
+                                selectedMood =
+                                    0; // 👈 Unselect emoji after submit
+                              });
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -354,10 +395,17 @@ class HomePage extends StatelessWidget {
                               // Show an error message if fields are empty
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Please fill all fields.'),
+                                  content: Text('Please select a option.'),
                                 ),
                               );
                             }
+                          } else {
+                            // Show an error message if fields are empty
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please fill all fields.'),
+                              ),
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -369,6 +417,7 @@ class HomePage extends StatelessWidget {
                         child: const Text('Submit'),
                       ),
                     ),
+                    SizedBox(height: 8),
                   ],
                 ),
               ),
@@ -472,7 +521,7 @@ class HomePage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  HistoryPage(userId: user_Id),
+                                  HistoryPage(userId: widget.user_Id),
                             ),
                           );
                         },
