@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'dart:io';
 
+import 'package:path_provider/path_provider.dart';
+
 //  function for simulate storing user data in the database
 Future<void> storeUserData({
   required String firstName,
@@ -22,21 +24,20 @@ Future<void> storeUserData({
 
   String? savedImagePath;
 
-  // ...existing code...
   if (photoPath != null) {
-    // Use assets path to save the user photo
-    final customDir = Directory('assets/user_photo');
-    if (!await customDir.exists()) {
-      await customDir.create(recursive: true);
-    }
-    final fileName = basename(photoPath);
-    final newImagePath = '${customDir.path}/$fileName';
+    // If it's an asset path, just store the string (no copying)
+    if (photoPath.startsWith('assets/')) {
+      savedImagePath = photoPath;
+    } else {
+      // Else, it's a user-picked file: copy to app directory
+      final appDir = await getApplicationDocumentsDirectory();
+      final fileName = basename(photoPath);
+      final newImagePath = '${appDir.path}/$fileName';
 
-    // Copy the image to the assets directory
-    await File(photoPath).copy(newImagePath);
-    savedImagePath = newImagePath;
+      await File(photoPath).copy(newImagePath);
+      savedImagePath = newImagePath;
+    }
   }
-  // ...existing code...
 
   await db.insert('user', {
     'first_name': firstName,
@@ -46,7 +47,7 @@ Future<void> storeUserData({
     'sex': sex,
     'pin_hash': pin,
     'created_at': DateTime.now().toIso8601String(),
-    'user_photo': savedImagePath, // ✅ saved file path
+    'user_photo': savedImagePath,
     'data_status': null,
   });
 
@@ -87,17 +88,6 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         _photo = File(pickedFile.path);
       });
-    }
-  }
-
-  //removable
-  // ignore: unused_element
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      // Handle registration logic here
-      ScaffoldMessenger.of(
-        context as BuildContext,
-      ).showSnackBar(const SnackBar(content: Text('Registration submitted!')));
     }
   }
 
@@ -168,7 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   items: const [
                     DropdownMenuItem(value: 'male', child: Text('Male')),
                     DropdownMenuItem(value: 'female', child: Text('Female')),
-                    DropdownMenuItem(value: 'other', child: Text('Other')),
+                    //DropdownMenuItem(value: 'other', child: Text('Other')),
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -205,6 +195,15 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () async {
+                    String? finalPhotoPath = _photo?.path;
+
+                    if (finalPhotoPath == null) {
+                      if (_selectedSex == 'male') {
+                        finalPhotoPath = 'assets/default_user/male_user.jpg';
+                      } else if (_selectedSex == 'female') {
+                        finalPhotoPath = 'assets/default_user/female_user.jpg';
+                      }
+                    }
                     if (_formKey.currentState!.validate()) {
                       // Save user data to database
                       await storeUserData(
@@ -214,7 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         occupation: _occupationController.text.trim(),
                         sex: _selectedSex ?? '',
                         pin: hashPin(_pinController.text.trim()),
-                        photoPath: _photo?.path,
+                        photoPath: finalPhotoPath,
                       );
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

@@ -45,6 +45,9 @@ class LoginPage extends StatelessWidget {
     // Get user's first name and photo if available
     String? firstName;
     String? userPhoto;
+
+   
+
     if (user.isNotEmpty) {
       firstName = user.first['first_name'] as String?;
       userPhoto =
@@ -69,7 +72,9 @@ class LoginPage extends StatelessWidget {
                 'Guest', // Use the firstName value or fallback to 'Guest'
             userProfilePicUrl:
                 userPhoto ?? '', // Use userPhoto or fallback to an empty string
-            user_Id: userId.isNotEmpty ? userId.first['id'] as int : 0, // Get user_id
+            user_Id: userId.isNotEmpty
+                ? userId.first['id'] as int
+                : 0, // Get user_id
           ),
         ),
       );
@@ -220,7 +225,7 @@ class LoginPage extends StatelessWidget {
                                       userFirstName: 'User', //user's first name
                                       userProfilePicUrl: // user's profile picture URL or default picture
                                           'https://example.com/profile.jpg',
-                                      user_Id: 0, // Placeholder for user_id 
+                                      user_Id: 0, // Placeholder for user_id
                                     ),
                                   ),
                                 );
