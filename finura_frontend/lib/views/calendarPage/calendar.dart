@@ -1,3 +1,4 @@
+import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
@@ -187,6 +188,60 @@ class _CalendarPageState extends State<CalendarPage> {
                     _noteController.clear();
                   },
                   child: Text('Submit'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 8,
+        color: const Color.fromARGB(255, 164, 245, 171),
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // QR Scanner icon (left)
+              GestureDetector(
+                onTap: () {
+                  print("Scan Icon tapped"); //?need to change this
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset('assets/icons/scan.png', width: 28, height: 28),
+                  ],
+                ),
+              ),
+              // Home icon (center)
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FinuraChatPage()),
+                  );
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircleAvatar(
+                      radius: 25,
+                      backgroundImage: AssetImage('assets/finura_icon.webp'),
+                    ),
+                  ],
+                ),
+              ),
+              // Notification icon (right)
+              GestureDetector(
+                onTap: () {
+                  print("Scan Icon tapped"); //?need to change this
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset('assets/icons/bell.png', width: 28, height: 28),
+                  ],
                 ),
               ),
             ],

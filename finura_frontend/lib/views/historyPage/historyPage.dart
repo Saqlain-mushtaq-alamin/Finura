@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 class Transaction {
   final int id;
   final String category;
+
   final double amount;
   final DateTime dateTime;
   final bool isIncome; // true = income, false = expense
@@ -13,6 +14,7 @@ class Transaction {
   Transaction({
     required this.id,
     required this.category,
+
     required this.amount,
     required this.dateTime,
     required this.isIncome,
@@ -71,9 +73,7 @@ class _HistoryPageState extends State<HistoryPage> {
     // Fetch income and expense entries from the database
     //!fixed order cont replace wiht each other
     // Replace with your actual DB calls
-    final incomeList = await getAllIncome(
-      widget.userId,
-    ); 
+    final incomeList = await getAllIncome(widget.userId);
     final expenseList = await getAllExpenses(widget.userId);
 
     final allTxns = [
@@ -81,6 +81,7 @@ class _HistoryPageState extends State<HistoryPage> {
       ...incomeList.map(
         (i) => Transaction(
           id: i['id'],
+
           category: i['description'] ?? 'Income',
           amount: (i['income_amount'] ?? 0).toDouble(), // ✅ now this works
           dateTime: DateTime.parse("${i['date']} ${i['time']}"),
@@ -91,6 +92,7 @@ class _HistoryPageState extends State<HistoryPage> {
       ...expenseList.map(
         (e) => Transaction(
           id: e['id'],
+
           category: e['description'] ?? 'Expense',
           amount: (e['expense_amount'] ?? 0).toDouble(), // ✅ now this works
           dateTime: DateTime.parse("${e['date']} ${e['time']}"),
@@ -130,6 +132,7 @@ class _HistoryPageState extends State<HistoryPage> {
             txn.category,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
+
           const SizedBox(height: 4),
           Text(
             DateFormat('yyyy-MM-dd - kk:mm').format(txn.dateTime),

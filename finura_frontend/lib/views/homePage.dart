@@ -295,7 +295,7 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: List.generate(5, (index) {
                         // Mapping emoji and mood value
-                        final emojiList = ["😢", "🫠", "😤", "😌", "🥳"];
+                        final emojiList = ["😤", "😌", "😐", "🥳", "😍"];
                         final moodValue = index + 1;
 
                         return GestureDetector(
