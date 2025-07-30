@@ -2,6 +2,7 @@ import 'package:finura_frontend/services/local_database/local_database_helper.da
 import 'package:finura_frontend/views/helpPage/help.dart';
 import 'package:finura_frontend/views/loninPage/login.dart';
 import 'package:finura_frontend/views/setting/P&S.dart';
+import 'package:finura_frontend/views/setting/about.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:io'; // Required for FileImage
@@ -165,7 +166,12 @@ class _SettingsPageState extends State<SettingsPage> {
                   _buildSettingOption(
                     icon: Icons.info_outline,
                     title: 'About',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AboutPage()),
+                      );
+                    },
                   ),
                   _buildSettingOption(
                     icon: Icons.logout,
