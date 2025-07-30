@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //await FinuraLocalDbHelper().resetDatabase(); // 🔥 Wipes old DB
 
   // 🔥 Start sync right on app startup
   await SyncService.syncAll();
 
-  runApp(const MyApp());
+  runApp(
+    MyApp(), // Wrap your app
+  );
 }
 
 class MyApp extends StatelessWidget {

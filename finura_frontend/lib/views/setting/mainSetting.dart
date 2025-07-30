@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'dart:io'; // Required for FileImage
 
 class SettingsPage extends StatefulWidget {
-  final int userId;
+  final String userId;
 
   const SettingsPage({super.key, required this.userId});
 

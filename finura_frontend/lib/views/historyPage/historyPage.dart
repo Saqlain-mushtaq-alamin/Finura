@@ -39,7 +39,7 @@ class _HistoryPageState extends State<HistoryPage> {
     _loadTransactions();
   }
 
-  Future<List<Map<String, dynamic>>> getAllIncome(int userId) async {
+  Future<List<Map<String, dynamic>>> getAllIncome(String userId) async {
     final db = await FinuraLocalDbHelper().database;
     return await db.query(
       'income_entry',
@@ -49,7 +49,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getAllExpenses(int userId) async {
+  Future<List<Map<String, dynamic>>> getAllExpenses(String userId) async {
     final db = await FinuraLocalDbHelper().database;
     return await db.query(
       'expense_entry',

@@ -9,6 +9,7 @@ import 'package:path/path.dart';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 //  function for simulate storing user data in the database
 Future<void> storeUserData({
@@ -23,6 +24,11 @@ Future<void> storeUserData({
   final db = await FinuraLocalDbHelper().database;
 
   String? savedImagePath;
+  
+  
+
+
+
 
   if (photoPath != null) {
     // If it's an asset path, just store the string (no copying)
@@ -38,8 +44,12 @@ Future<void> storeUserData({
       savedImagePath = newImagePath;
     }
   }
+  
+var uuid = Uuid();
+String userId = uuid.v4(); // This is your new user ID
 
   await db.insert('user', {
+    'id': userId,
     'first_name': firstName,
     'last_name': lastName,
     'email': email,

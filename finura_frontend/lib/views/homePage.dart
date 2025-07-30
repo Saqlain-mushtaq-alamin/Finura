@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
   final String userFirstName;
   final String userProfilePicUrl;
 
-  var user_Id; // 👈 user_id from the user table
+  String user_Id; // 👈 user_id from the user table
 
   HomePage({
     super.key,
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> insertIncomeEntry({
-    required int userId,
+    required String userId,
     required int mood,
     required String category,
     required double amount,
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
 
   // Function to insert an expense entry into the database
   Future<void> insertExpenseEntry({
-    required int userId,
+    required String userId,
     required int mood,
     required String description,
     required double amount,

@@ -34,7 +34,8 @@ class LoginPage extends StatelessWidget {
     final String storedPinHash = user['pin_hash'] as String;
     final String? firstName = user['first_name'] as String?;
     final String? userPhoto = user['user_photo'] as String?;
-    final int userId = user['id'] as int;
+    final String userId = user['id'] as String;
+    print("=======================================>>The user ID is $userId");
 
     // Hash entered PIN
     final enteredPinHash = sha256.convert(utf8.encode(pin)).toString();
@@ -189,26 +190,6 @@ class LoginPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // TODO: Implement login logic
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomePage(
-                                      userFirstName: 'User', //user's first name
-                                      userProfilePicUrl: // user's profile picture URL or default picture
-                                          'https://example.com/profile.jpg',
-                                      user_Id: 0, // Placeholder for user_id
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: const Text('home windows'),
-                            ),
-                          ),
                         ],
                       ),
                     ),

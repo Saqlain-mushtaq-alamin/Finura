@@ -37,7 +37,7 @@ class FinuraLocalDbHelper {
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE user (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         pin_hash TEXT NOT NULL,
         first_name TEXT NOT NULL,
         last_name TEXT NOT NULL,
@@ -54,7 +54,7 @@ class FinuraLocalDbHelper {
     await db.execute('''
     CREATE TABLE expense_entry (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
+      user_id TEXT NOT NULL,
       date TEXT NOT NULL,
       day INTEGER NOT NULL,
       time TEXT NOT NULL,
@@ -70,7 +70,7 @@ class FinuraLocalDbHelper {
     await db.execute('''
       CREATE TABLE income_entry (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
+        user_id TEXT NOT NULL,
         date TEXT NOT NULL,
         day INTEGER NOT NULL,
         time TEXT NOT NULL,
@@ -86,7 +86,7 @@ class FinuraLocalDbHelper {
     await db.execute('''
       CREATE TABLE saving_goal (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
+        user_id TEXT NOT NULL,
         target_amount REAL NOT NULL,
         frequency TEXT NOT NULL CHECK(frequency IN ('daily', 'weekly', 'monthly')),
         start_date TEXT NOT NULL,
@@ -102,7 +102,7 @@ class FinuraLocalDbHelper {
     await db.execute('''
       CREATE TABLE note_entry (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
+        user_id TEXT NOT NULL,
         title TEXT NOT NULL,
         content TEXT NOT NULL,
         created_at TEXT NOT NULL,
@@ -193,6 +193,9 @@ class FinuraLocalDbHelper {
     );
     print("📋 Tables in DB: $tables");
   }
+
+
+
 
   // Optional: Dev-only reset method (call this manually if needed)
   Future<void> resetDatabase() async {
