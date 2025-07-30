@@ -1,18 +1,14 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
+import 'package:finura_frontend/views/calendarPage/noteHistory.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
+// ignore: must_be_immutable
 class CalendarPage extends StatefulWidget {
-
   var userID;
-
-  
-  CalendarPage({
-    super.key,
-    required this.userID
-  });
+  CalendarPage({super.key, required this.userID});
 
   @override
   _CalendarPageState createState() => _CalendarPageState();
@@ -43,6 +39,11 @@ class _CalendarPageState extends State<CalendarPage> {
             tooltip: 'History',
             onPressed: () {
               // TODO: Add your history logic here
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NoteHistoryPage()),
+              );
+
               print('History icon tapped');
             },
           ),
@@ -193,7 +194,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         'title': title,
                         'content': note,
                         'created_at': DateTime.now().toIso8601String(),
-                        'updated_at': DateTime.now().toIso8601String(),
+                        'updated_at': _selectedDay.toIso8601String(),
                       });
 
                       ScaffoldMessenger.of(
