@@ -1,4 +1,6 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
+import 'package:finura_frontend/views/helpPage/help.dart';
+import 'package:finura_frontend/views/loninPage/login.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:io'; // Required for FileImage
@@ -139,7 +141,12 @@ class _SettingsPageState extends State<SettingsPage> {
                   _buildSettingOption(
                     icon: Icons.support_agent,
                     title: 'Support',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GetHelpPage()),
+                      );
+                    },
                   ),
                   _buildSettingOption(
                     icon: Icons.shield,
@@ -155,7 +162,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     icon: Icons.logout,
                     title: 'Log Out',
                     onTap: () {
-                      // Handle log out
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
                     },
                   ),
                 ],
