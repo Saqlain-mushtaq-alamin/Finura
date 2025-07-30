@@ -1,6 +1,6 @@
-import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -10,10 +10,16 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  String selectedView = 'Day'; // or 'Month'
+  List<String> views = ['Day', 'Week', 'Month'];
+  int selectedIndex = 0;
+
   double totalIncome = 0.0;
   double totalExpense = 0.0;
-  List<FlSpot> chartData = [];
+
+  List<FlSpot> incomeSpots = [];
+  List<FlSpot> expenseSpots = [];
+
+  String get selectedView => views[selectedIndex];
 
   @override
   void initState() {
@@ -24,47 +30,182 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> _fetchData() async {
     final db = await FinuraLocalDbHelper().database;
     final now = DateTime.now();
+    final dateToday = now.toIso8601String().split('T').first;
+    final year = now.year.toString();
+    final month = now.month.toString().padLeft(2, '0');
     final day = now.day;
-    final month = now.month;
-    final year = now.year;
+    final weekday = now.weekday; // 1 (Mon) - 7 (Sun)
 
-    String whereClause;
-    List<String> whereArgs;
+    String incomeTotalQuery = '';
+    String expenseTotalQuery = '';
+    List<String> args = [];
 
     if (selectedView == 'Day') {
-      whereClause = 'date = ?';
-      whereArgs = [
-        '${year.toString().padLeft(4, '0')}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}',
-      ];
+      incomeTotalQuery =
+          "SELECT SUM(income_amount) as total_income FROM income_entry WHERE date = ?";
+      expenseTotalQuery =
+          "SELECT SUM(expense_amount) as total_expense FROM expense_entry WHERE date = ?";
+      args = [dateToday];
+
+      final incomeResult = await db.rawQuery(
+        'SELECT strftime("%H", time) as hour, SUM(income_amount) as total_income FROM income_entry WHERE date = ? GROUP BY hour ORDER BY hour',
+        [dateToday],
+      );
+      final expenseResult = await db.rawQuery(
+        'SELECT strftime("%H", time) as hour, SUM(expense_amount) as total_expense FROM expense_entry WHERE date = ? GROUP BY hour ORDER BY hour',
+        [dateToday],
+      );
+      incomeSpots = incomeResult.map((row) {
+        double x = double.parse(row['hour'].toString());
+        double y = double.tryParse(row['total_income'].toString()) ?? 0.0;
+        return FlSpot(x, y);
+      }).toList();
+      expenseSpots = expenseResult.map((row) {
+        double x = double.parse(row['hour'].toString());
+        double y = double.tryParse(row['total_expense'].toString()) ?? 0.0;
+        return FlSpot(x, y);
+      }).toList();
+    } else if (selectedView == 'Week') {
+      DateTime startOfWeek = now.subtract(Duration(days: weekday - 1));
+      String start = startOfWeek.toIso8601String().split('T').first;
+      String end = now.toIso8601String().split('T').first;
+
+      incomeTotalQuery =
+          "SELECT SUM(income_amount) as total_income FROM income_entry WHERE date BETWEEN ? AND ?";
+      expenseTotalQuery =
+          "SELECT SUM(expense_amount) as total_expense FROM expense_entry WHERE date BETWEEN ? AND ?";
+      args = [start, end];
+
+      final incomeResult = await db.rawQuery(
+        'SELECT strftime("%w", date) as weekday, SUM(income_amount) as total_income FROM income_entry WHERE date BETWEEN ? AND ? GROUP BY weekday ORDER BY weekday',
+        [start, end],
+      );
+      final expenseResult = await db.rawQuery(
+        'SELECT strftime("%w", date) as weekday, SUM(expense_amount) as total_expense FROM expense_entry WHERE date BETWEEN ? AND ? GROUP BY weekday ORDER BY weekday',
+        [start, end],
+      );
+      incomeSpots = incomeResult.map((row) {
+        double x = double.parse(row['weekday'].toString());
+        double y = double.tryParse(row['total_income'].toString()) ?? 0.0;
+        return FlSpot(x, y);
+      }).toList();
+      expenseSpots = expenseResult.map((row) {
+        double x = double.parse(row['weekday'].toString());
+        double y = double.tryParse(row['total_expense'].toString()) ?? 0.0;
+        return FlSpot(x, y);
+      }).toList();
     } else {
-      whereClause = 'strftime("%m", date) = ? AND strftime("%Y", date) = ?';
-      whereArgs = [month.toString().padLeft(2, '0'), year.toString()];
+      incomeTotalQuery =
+          "SELECT SUM(income_amount) as total_income FROM income_entry WHERE strftime('%m', date) = ? AND strftime('%Y', date) = ?";
+      expenseTotalQuery = incomeTotalQuery;
+      args = [month, year];
+
+      final incomeResult = await db.rawQuery(
+        'SELECT ((day - 1) / 7) as week, SUM(income_amount) as total_income FROM income_entry WHERE strftime("%m", date) = ? AND strftime("%Y", date) = ? GROUP BY week ORDER BY week',
+        [month, year],
+      );
+      final expenseResult = await db.rawQuery(
+        'SELECT ((day - 1) / 7) as week, SUM(expense_amount) as total_expense FROM expense_entry WHERE strftime("%m", date) = ? AND strftime("%Y", date) = ? GROUP BY week ORDER BY week',
+        [month, year],
+      );
+      incomeSpots = incomeResult.map((row) {
+        double x = double.parse(row['week'].toString());
+        double y = double.tryParse(row['total_income'].toString()) ?? 0.0;
+        return FlSpot(x, y);
+      }).toList();
+      expenseSpots = expenseResult.map((row) {
+        double x = double.parse(row['week'].toString());
+        double y = double.tryParse(row['total_expense'].toString()) ?? 0.0;
+        return FlSpot(x, y);
+      }).toList();
     }
 
-    final incomeResult = await db.rawQuery(
-      'SELECT SUM(income_amount) as total FROM income_entry WHERE $whereClause',
-      whereArgs,
+    final totalIncomeResult = await db.rawQuery(incomeTotalQuery, args);
+    final totalExpenseResult = await db.rawQuery(expenseTotalQuery, args);
+
+    totalIncome =
+        double.tryParse(
+          totalIncomeResult.first['total_income']?.toString() ?? '0',
+        ) ??
+        0.0;
+    totalExpense =
+        double.tryParse(
+          totalExpenseResult.first['total_expense']?.toString() ?? '0',
+        ) ??
+        0.0;
+
+    setState(() {});
+  }
+
+  Widget buildChart() {
+    return LineChart(
+      LineChartData(
+        minY: 0,
+        gridData: FlGridData(show: true, drawVerticalLine: true),
+        titlesData: FlTitlesData(
+          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, _) {
+                if (selectedView == 'Day') {
+                  return Text(
+                    '${value.toInt()}h',
+                    style: const TextStyle(fontSize: 10),
+                  );
+                } else if (selectedView == 'Week') {
+                  const days = [
+                    'Sun',
+                    'Mon',
+                    'Tue',
+                    'Wed',
+                    'Thu',
+                    'Fri',
+                    'Sat',
+                  ];
+                  return Text(
+                    days[value.toInt() % 7],
+                    style: const TextStyle(fontSize: 10),
+                  );
+                } else {
+                  return Text(
+                    'W${(value + 1).toInt()}',
+                    style: const TextStyle(fontSize: 10),
+                  );
+                }
+              },
+            ),
+          ),
+        ),
+        borderData: FlBorderData(show: false),
+        lineBarsData: [
+          LineChartBarData(
+            isCurved: true,
+            spots: incomeSpots,
+            color: Colors.green,
+            dotData: FlDotData(show: true),
+            belowBarData: BarAreaData(
+              show: true,
+              color: Colors.green.withOpacity(0.3),
+            ),
+            barWidth: 3,
+          ),
+          LineChartBarData(
+            isCurved: true,
+            spots: expenseSpots,
+            color: Colors.red,
+            dotData: FlDotData(show: true),
+            belowBarData: BarAreaData(
+              show: true,
+              color: Colors.red.withOpacity(0.2),
+            ),
+            barWidth: 3,
+          ),
+        ],
+      ),
     );
-
-    final expenseResult = await db.rawQuery(
-      'SELECT SUM(expense_amount) as total FROM expense_entry WHERE $whereClause',
-      whereArgs,
-    );
-
-    setState(() {
-      totalIncome = incomeResult.first['total'] != null
-          ? (incomeResult.first['total'] as double)
-          : 0.0;
-      totalExpense = expenseResult.first['total'] != null
-          ? (expenseResult.first['total'] as double)
-          : 0.0;
-
-      // For chart: dummy data (replace with actual grouped data)
-      chartData = List.generate(
-        7,
-        (i) => FlSpot(i.toDouble(), (i * 10).toDouble()),
-      );
-    });
   }
 
   @override
@@ -75,30 +216,32 @@ class _DashboardPageState extends State<DashboardPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Selection Row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Total according to"),
-                DropdownButton<String>(
-                  value: selectedView,
-                  items: ['Day', 'Month'].map((view) {
-                    return DropdownMenuItem(value: view, child: Text(view));
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        selectedView = value;
-                      });
-                      _fetchData();
-                    }
+                const Text("Total according to"),
+                ToggleButtons(
+                  borderRadius: BorderRadius.circular(12),
+                  selectedColor: Colors.white,
+                  fillColor: Theme.of(context).primaryColor,
+                  color: Colors.black,
+                  isSelected: List.generate(3, (i) => i == selectedIndex),
+                  onPressed: (index) {
+                    setState(() => selectedIndex = index);
+                    _fetchData();
                   },
+                  children: views
+                      .map(
+                        (v) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(v),
+                        ),
+                      )
+                      .toList(),
                 ),
               ],
             ),
             const SizedBox(height: 10),
-
-            // Income/Expense Summary
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -113,9 +256,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     style: const TextStyle(color: Colors.green, fontSize: 16),
                   ),
                   LinearProgressIndicator(
-                    value:
-                        totalIncome /
-                        (totalIncome + totalExpense + 1), // +1 to avoid /0
+                    value: totalIncome / (totalIncome + totalExpense + 1),
                     backgroundColor: Colors.green.shade100,
                     color: Colors.green,
                   ),
@@ -132,30 +273,22 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               ),
             ),
-
             const SizedBox(height: 20),
-
-            // Line Chart
             Expanded(
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      spreadRadius: 5,
+                    ),
+                  ],
                 ),
-                child: LineChart(
-                  LineChartData(
-                    titlesData: FlTitlesData(show: true),
-                    lineBarsData: [
-                      LineChartBarData(
-                        isCurved: true,
-                        spots: chartData,
-                        color: Colors.blue[200],
-                        barWidth: 3,
-                      ),
-                    ],
-                  ),
-                ),
+                child: buildChart(),
               ),
             ),
           ],
