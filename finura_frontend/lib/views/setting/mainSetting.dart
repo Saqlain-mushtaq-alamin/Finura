@@ -1,6 +1,7 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:finura_frontend/views/helpPage/help.dart';
 import 'package:finura_frontend/views/loninPage/login.dart';
+import 'package:finura_frontend/views/setting/P&S.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:io'; // Required for FileImage
@@ -151,7 +152,15 @@ class _SettingsPageState extends State<SettingsPage> {
                   _buildSettingOption(
                     icon: Icons.shield,
                     title: 'Privacy & Security',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PrivacyAndSecuritySettingsPage(),
+                        ),
+                      );
+                    },
                   ),
                   _buildSettingOption(
                     icon: Icons.info_outline,
