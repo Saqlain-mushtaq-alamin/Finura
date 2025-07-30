@@ -33,19 +33,49 @@ class _CalendarPageState extends State<CalendarPage> {
         backgroundColor: const Color.fromARGB(255, 164, 245, 171),
         title: Text('Calendar'),
         centerTitle: false,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.history),
-            tooltip: 'History',
-            onPressed: () {
-              // TODO: Add your history logic here
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NoteHistoryPage()),
-              );
 
-              print('History icon tapped');
-            },
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(
+              right: 35.0,
+              left: 16.0,
+              top: 8.0,
+              bottom: 8.0,
+            ),
+
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade400, width: 1),
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.green,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: GestureDetector(
+                  onTap: () {
+                    print("AppBaar Icon tapped"); //?need to change this
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NoteHistoryPage(),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Image.asset(
+                          'assets/icons/unotse.png',
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -163,7 +193,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 maxLines: 3,
               ),
 
-              SizedBox(height: 15),
+              SizedBox(height: 25),
 
               // Submit button
               SizedBox(
