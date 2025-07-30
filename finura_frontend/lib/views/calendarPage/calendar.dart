@@ -1,9 +1,19 @@
+import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
 class CalendarPage extends StatefulWidget {
+
+  var userID;
+
+  
+  CalendarPage({
+    super.key,
+    required this.userID
+  });
+
   @override
   _CalendarPageState createState() => _CalendarPageState();
 }
@@ -163,7 +173,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       vertical: 14,
                     ), // remove horizontal padding
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     String title = _titleController.text.trim();
                     String note = _noteController.text.trim();
 
@@ -174,19 +184,31 @@ class _CalendarPageState extends State<CalendarPage> {
                       return;
                     }
 
-                    print(
-                      'Title: $title\nNote: $note\nDate: $formattedSelectedDate',
-                    );
+                    try {
+                      final dbHelper = FinuraLocalDbHelper();
+                      final db = await dbHelper.database;
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Note saved for $formattedSelectedDate'),
-                      ),
-                    );
+                      await db.insert('note_entry', {
+                        'user_id': widget.userID,
+                        'title': title,
+                        'content': note,
+                        'created_at': DateTime.now().toIso8601String(),
+                        'updated_at': DateTime.now().toIso8601String(),
+                      });
 
-                    _titleController.clear();
-                    _noteController.clear();
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('Note saved')));
+
+                      _titleController.clear();
+                      _noteController.clear();
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error saving note: $e')),
+                      );
+                    }
                   },
+
                   child: Text('Submit'),
                 ),
               ),

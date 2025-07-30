@@ -577,7 +577,8 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CalendarPage(),
+                              builder: (context) =>
+                                  CalendarPage(userID: widget.user_Id),
                             ),
                           );
                         },
