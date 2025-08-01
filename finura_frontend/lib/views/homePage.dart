@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
-import 'package:finura_frontend/views/DashboardPage/dashboard.dart';
+import 'package:finura_frontend/views/DashboardPage/dashboard.dart' hide FinuraLocalDbHelper;
 import 'package:finura_frontend/views/calendarPage/calendar.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:finura_frontend/views/helpPage/help.dart';
@@ -508,7 +508,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DashboardPage(),
+                              builder: (context) => DashboardScreen(),
                             ),
                           );
                         },
