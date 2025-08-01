@@ -89,89 +89,127 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard')),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 30,
-              width: 200,
-              child: ToggleButtons(
-                isSelected: [
-                  selectedRange == 'day',
-                  selectedRange == 'week',
-                  selectedRange == 'month',
-                ],
-                onPressed: (index) {
-                  setState(() {
-                    selectedRange = ['day', 'week', 'month'][index];
-                    _fetchData();
-                  });
-                },
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text("Day"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text("Week"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text("Month"),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: AppBar(
+        title: const Text('Dashboard'),
+        backgroundColor: const Color.fromARGB(255, 164, 245, 171),
+      ),
+      body: Container(
+        color: const Color.fromARGB(255, 240, 240, 240),
+
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: SizedBox(
+            width: double.infinity,
+            height: 260,
+
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+
+              child: Column(
                 children: [
-                  // Income and Expense
-                  Expanded(
-                    child: Column(
+                  const SizedBox(height: 16),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    margin: const EdgeInsets.only(left: 16),
+                    child: SizedBox(
+                      height: 25,
+                      width: 200,
+
+                      child: ToggleButtons(
+                        isSelected: [
+                          selectedRange == 'day',
+                          selectedRange == 'week',
+                          selectedRange == 'month',
+                        ],
+                        onPressed: (index) {
+                          setState(() {
+                            selectedRange = ['day', 'week', 'month'][index];
+                            _fetchData();
+                          });
+                        },
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Text("Day"),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Text("Week"),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Text("Month"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Total Income:",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "৳ ${totalIncome.toStringAsFixed(2)}",
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontSize: 18,
+                        // Income and Expense
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Total Income:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Text(
+                                "৳ ${totalIncome.toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                "Total Expense:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Text(
+                                "৳ ${totalExpense.toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                  fontSize: 19,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          "Total Expense:",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "৳ ${totalExpense.toStringAsFixed(2)}",
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 18,
-                          ),
+
+                        // Pie Chart
+                        Expanded(
+                          flex: 1,
+
+                          child: SizedBox(height: 150, child: _buildPieChart()),
                         ),
                       ],
                     ),
                   ),
-                  // Pie Chart
-                  Expanded(
-                    child: SizedBox(height: 150, child: _buildPieChart()),
-                  ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
+      
+        
+
       ),
     );
   }
