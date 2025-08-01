@@ -205,4 +205,7 @@ class FinuraLocalDbHelper {
     _database = null; // Clear cached instance
     print("Database has been reset.");
   }
+
+  
+
 }
