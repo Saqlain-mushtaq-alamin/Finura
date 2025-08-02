@@ -16,6 +16,10 @@ class _DashboardPageState extends State<DashboardPage> {
   double totalIncome = 0;
   double totalExpense = 0;
 
+  // Data for line charts
+  List<FlSpot> incomeSpots = [];
+  List<FlSpot> expenseSpots = [];
+
   @override
   void initState() {
     super.initState();
@@ -25,7 +29,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> _fetchData() async {
     final db = await FinuraLocalDbHelper().database;
     final now = DateTime.now();
-    late DateTime startDate;
+    DateTime startDate;
 
     if (selectedRange == 'day') {
       startDate = DateTime(now.year, now.month, now.day);
@@ -35,30 +39,216 @@ class _DashboardPageState extends State<DashboardPage> {
       startDate = now.subtract(const Duration(days: 29));
     }
 
-    final start = DateFormat('yyyy-MM-dd').format(startDate);
-    final end = DateFormat('yyyy-MM-dd').format(now);
+    final startStr = DateFormat('yyyy-MM-dd').format(startDate);
+    final endStr = DateFormat('yyyy-MM-dd').format(now);
 
+    // Total income and expense sums for pie chart
     final incomeResult = await db.rawQuery(
       '''
-    SELECT SUM(income_amount) as total FROM income_entry
-    WHERE user_id = ? AND date BETWEEN ? AND ?
-  ''',
-      [widget.userId, start, end],
+      SELECT SUM(income_amount) as total FROM income_entry
+      WHERE user_id = ? AND date BETWEEN ? AND ?
+      ''',
+      [widget.userId, startStr, endStr],
     );
 
     final expenseResult = await db.rawQuery(
       '''
-    SELECT SUM(expense_amount) as total FROM expense_entry
-    WHERE user_id = ? AND date BETWEEN ? AND ?
-  ''',
-      [widget.userId, start, end],
+      SELECT SUM(expense_amount) as total FROM expense_entry
+      WHERE user_id = ? AND date BETWEEN ? AND ?
+      ''',
+      [widget.userId, startStr, endStr],
     );
 
-    // 👇 Ensure state is updated *after* data is retrieved
-    setState(() {
-      totalIncome = (incomeResult.first['total'] ?? 0.0) as double;
-      totalExpense = (expenseResult.first['total'] ?? 0.0) as double;
-    });
+    totalIncome = (incomeResult.first['total'] ?? 0.0) as double;
+    totalExpense = (expenseResult.first['total'] ?? 0.0) as double;
+
+    // Now get data for line charts by range
+    if (selectedRange == 'day') {
+      await _fetchDayChartData(db, startDate, now);
+    } else if (selectedRange == 'week') {
+      await _fetchWeekChartData(db, startDate, now);
+    } else {
+      await _fetchMonthChartData(db, startDate, now);
+    }
+
+    setState(() {}); // Update UI
+  }
+
+  // Fetch hourly data for 'day' (24 hours)
+  Future<void> _fetchDayChartData(
+    dynamic db,
+    DateTime startDate,
+    DateTime now,
+  ) async {
+    incomeSpots = List.generate(24, (index) => FlSpot(index.toDouble(), 0));
+    expenseSpots = List.generate(24, (index) => FlSpot(index.toDouble(), 0));
+
+    // Query income amounts grouped by hour
+    final incomeHourly = await db.rawQuery(
+      '''
+      SELECT strftime('%H', date || ' ' || time) as hour, SUM(income_amount) as total
+      FROM income_entry
+      WHERE user_id = ? AND date BETWEEN ? AND ?
+      GROUP BY hour
+      ''',
+      [
+        widget.userId,
+        DateFormat('yyyy-MM-dd').format(startDate),
+        DateFormat('yyyy-MM-dd').format(now),
+      ],
+    );
+
+    // Query expense amounts grouped by hour
+    final expenseHourly = await db.rawQuery(
+      '''
+      SELECT strftime('%H', date || ' ' || time) as hour, SUM(expense_amount) as total
+      FROM expense_entry
+      WHERE user_id = ? AND date BETWEEN ? AND ?
+      GROUP BY hour
+      ''',
+      [
+        widget.userId,
+        DateFormat('yyyy-MM-dd').format(startDate),
+        DateFormat('yyyy-MM-dd').format(now),
+      ],
+    );
+
+    // Map hour string to double value for FlSpot
+    Map<int, double> incomeMap = {};
+    Map<int, double> expenseMap = {};
+
+    for (var row in incomeHourly) {
+      final hour = int.tryParse(row['hour'] as String) ?? 0;
+      final total = (row['total'] ?? 0.0) as double;
+      incomeMap[hour] = total;
+    }
+    for (var row in expenseHourly) {
+      final hour = int.tryParse(row['hour'] as String) ?? 0;
+      final total = (row['total'] ?? 0.0) as double;
+      expenseMap[hour] = total;
+    }
+
+    for (int i = 0; i < 24; i++) {
+      incomeSpots[i] = FlSpot(i.toDouble(), incomeMap[i] ?? 0);
+      expenseSpots[i] = FlSpot(i.toDouble(), expenseMap[i] ?? 0);
+    }
+  }
+
+  // Fetch daily data for 'week' (7 days)
+  Future<void> _fetchWeekChartData(
+    dynamic db,
+    DateTime startDate,
+    DateTime now,
+  ) async {
+    incomeSpots = List.generate(7, (index) => FlSpot(index.toDouble(), 0));
+    expenseSpots = List.generate(7, (index) => FlSpot(index.toDouble(), 0));
+
+    final startStr = DateFormat('yyyy-MM-dd').format(startDate);
+    final endStr = DateFormat('yyyy-MM-dd').format(now);
+
+    // Income by day
+    final incomeDaily = await db.rawQuery(
+      '''
+      SELECT date, SUM(income_amount) as total
+      FROM income_entry
+      WHERE user_id = ? AND date BETWEEN ? AND ?
+      GROUP BY date
+      ORDER BY date ASC
+      ''',
+      [widget.userId, startStr, endStr],
+    );
+
+    // Expense by day
+    final expenseDaily = await db.rawQuery(
+      '''
+      SELECT date, SUM(expense_amount) as total
+      FROM expense_entry
+      WHERE user_id = ? AND date BETWEEN ? AND ?
+      GROUP BY date
+      ORDER BY date ASC
+      ''',
+      [widget.userId, startStr, endStr],
+    );
+
+    // Map date string to index 0..6 for 7 days
+    List<DateTime> daysList = List.generate(
+      7,
+      (i) => startDate.add(Duration(days: i)),
+    );
+
+    Map<String, double> incomeMap = {};
+    Map<String, double> expenseMap = {};
+
+    for (var row in incomeDaily) {
+      incomeMap[row['date'] as String] = (row['total'] ?? 0.0) as double;
+    }
+    for (var row in expenseDaily) {
+      expenseMap[row['date'] as String] = (row['total'] ?? 0.0) as double;
+    }
+
+    for (int i = 0; i < 7; i++) {
+      final dayStr = DateFormat('yyyy-MM-dd').format(daysList[i]);
+      incomeSpots[i] = FlSpot(i.toDouble(), incomeMap[dayStr] ?? 0);
+      expenseSpots[i] = FlSpot(i.toDouble(), expenseMap[dayStr] ?? 0);
+    }
+  }
+
+  // Fetch weekly data for 'month' (4 weeks)
+  Future<void> _fetchMonthChartData(
+    dynamic db,
+    DateTime startDate,
+    DateTime now,
+  ) async {
+    incomeSpots = List.generate(4, (index) => FlSpot(index.toDouble(), 0));
+    expenseSpots = List.generate(4, (index) => FlSpot(index.toDouble(), 0));
+
+    // Calculate week ranges (4 weeks)
+    List<DateTime> weekStarts = List.generate(
+      4,
+      (i) => startDate.add(Duration(days: i * 7)),
+    );
+
+    List<DateTime> weekEnds = List.generate(
+      4,
+      (i) => weekStarts[i].add(const Duration(days: 6)),
+    );
+
+    Map<int, double> incomeMap = {};
+    Map<int, double> expenseMap = {};
+
+    for (int i = 0; i < 4; i++) {
+      String start = DateFormat('yyyy-MM-dd').format(weekStarts[i]);
+      String end = DateFormat(
+        'yyyy-MM-dd',
+      ).format(weekEnds[i].isAfter(now) ? now : weekEnds[i]);
+
+      // Income for week i
+      final incomeWeek = await db.rawQuery(
+        '''
+        SELECT SUM(income_amount) as total
+        FROM income_entry
+        WHERE user_id = ? AND date BETWEEN ? AND ?
+        ''',
+        [widget.userId, start, end],
+      );
+      incomeMap[i] = (incomeWeek.first['total'] ?? 0.0) as double;
+
+      // Expense for week i
+      final expenseWeek = await db.rawQuery(
+        '''
+        SELECT SUM(expense_amount) as total
+        FROM expense_entry
+        WHERE user_id = ? AND date BETWEEN ? AND ?
+        ''',
+        [widget.userId, start, end],
+      );
+      expenseMap[i] = (expenseWeek.first['total'] ?? 0.0) as double;
+    }
+
+    for (int i = 0; i < 4; i++) {
+      incomeSpots[i] = FlSpot(i.toDouble(), incomeMap[i] ?? 0);
+      expenseSpots[i] = FlSpot(i.toDouble(), expenseMap[i] ?? 0);
+    }
   }
 
   Widget _buildPieChart() {
@@ -82,7 +272,175 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
-      key: ValueKey('$totalIncome-$totalExpense'), // 👈 forces redraw
+      key: ValueKey('$totalIncome-$totalExpense'),
+    );
+  }
+
+  Widget _buildLineChartDay() {
+    return LineChart(
+      LineChartData(
+        minX: 0,
+        maxX: 23,
+        minY: 0,
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              getTitlesWidget: (value, meta) {
+                int hour = value.toInt();
+                if (hour % 3 != 0) return const SizedBox.shrink();
+                String amPm = hour < 12 ? "AM" : "PM";
+                int displayHour = hour % 12 == 0 ? 12 : hour % 12;
+                return Text(
+                  '$displayHour $amPm',
+                  style: const TextStyle(fontSize: 10),
+                );
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+          ),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
+        gridData: FlGridData(show: true),
+        lineBarsData: [
+          LineChartBarData(
+            spots: incomeSpots,
+            isCurved: true,
+            color: Colors.green,
+            barWidth: 3,
+            dotData: FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              color: Colors.green.withOpacity(0.2),
+            ),
+          ),
+          LineChartBarData(
+            spots: expenseSpots,
+            isCurved: true,
+            color: Colors.red,
+            barWidth: 3,
+            dotData: FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              color: Colors.red.withOpacity(0.2),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLineChartWeek() {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return LineChart(
+      LineChartData(
+        minX: 0,
+        maxX: 6,
+        minY: 0,
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              getTitlesWidget: (value, meta) {
+                int index = value.toInt();
+                if (index < 0 || index >= 7) return const SizedBox.shrink();
+                return Text(days[index], style: const TextStyle(fontSize: 12));
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+          ),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
+        gridData: FlGridData(show: true),
+        lineBarsData: [
+          LineChartBarData(
+            spots: incomeSpots,
+            isCurved: true,
+            color: Colors.green,
+            barWidth: 3,
+            dotData: FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              color: Colors.green.withOpacity(0.2),
+            ),
+          ),
+          LineChartBarData(
+            spots: expenseSpots,
+            isCurved: true,
+            color: Colors.red,
+            barWidth: 3,
+            dotData: FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              color: Colors.red.withOpacity(0.2),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLineChartMonth() {
+    return LineChart(
+      LineChartData(
+        minX: 0,
+        maxX: 3,
+        minY: 0,
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              getTitlesWidget: (value, meta) {
+                int index = value.toInt();
+                if (index < 0 || index >= 4) return const SizedBox.shrink();
+                return Text(
+                  'Week ${index + 1}',
+                  style: const TextStyle(fontSize: 12),
+                );
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+          ),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
+        gridData: FlGridData(show: true),
+        lineBarsData: [
+          LineChartBarData(
+            spots: incomeSpots,
+            isCurved: true,
+            color: Colors.green,
+            barWidth: 3,
+            dotData: FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              color: Colors.green.withOpacity(0.2),
+            ),
+          ),
+          LineChartBarData(
+            spots: expenseSpots,
+            isCurved: true,
+            color: Colors.red,
+            barWidth: 3,
+            dotData: FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              color: Colors.red.withOpacity(0.2),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -95,7 +453,6 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       body: Container(
         color: const Color.fromARGB(255, 240, 240, 240),
-
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -103,113 +460,126 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           child: SizedBox(
             width: double.infinity,
-            height: 260,
-
+            height: MediaQuery.of(context).size.height,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    margin: const EdgeInsets.only(left: 16),
-                    child: SizedBox(
-                      height: 25,
-                      width: 200,
-
-                      child: ToggleButtons(
-                        isSelected: [
-                          selectedRange == 'day',
-                          selectedRange == 'week',
-                          selectedRange == 'month',
-                        ],
-                        onPressed: (index) {
-                          setState(() {
-                            selectedRange = ['day', 'week', 'month'][index];
-                            _fetchData();
-                          });
-                        },
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            child: Text("Day"),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      margin: const EdgeInsets.only(left: 16),
+                      child: SizedBox(
+                        height: 25,
+                        width: 200,
+                        child: ToggleButtons(
+                          isSelected: [
+                            selectedRange == 'day',
+                            selectedRange == 'week',
+                            selectedRange == 'month',
+                          ],
+                          onPressed: (index) {
+                            setState(() {
+                              selectedRange = ['day', 'week', 'month'][index];
+                              _fetchData();
+                            });
+                          },
+                          children: const [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: Text("Day"),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: Text("Week"),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: Text("Month"),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Income and Expense
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Total Income:",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                Text(
+                                  "৳ ${totalIncome.toStringAsFixed(2)}",
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 19,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  "Total Expense:",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                Text(
+                                  "৳ ${totalExpense.toStringAsFixed(2)}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                    fontSize: 19,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            child: Text("Week"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            child: Text("Month"),
+
+                          // Pie Chart
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox(
+                              height: 150,
+                              child: _buildPieChart(),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Income and Expense
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Total Income:",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                "৳ ${totalIncome.toStringAsFixed(2)}",
-                                style: const TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 19,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                "Total Expense:",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                "৳ ${totalExpense.toStringAsFixed(2)}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red,
-                                  fontSize: 19,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                    const SizedBox(height: 20),
 
-                        // Pie Chart
-                        Expanded(
-                          flex: 1,
-
-                          child: SizedBox(height: 150, child: _buildPieChart()),
-                        ),
-                      ],
+                    // Line Chart
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 20, 8.0),
+                      child: SizedBox(
+                        height: 250,
+                        width: MediaQuery.of(context).size.width,
+                        child: selectedRange == 'day'
+                            ? _buildLineChartDay()
+                            : selectedRange == 'week'
+                            ? _buildLineChartWeek()
+                            : _buildLineChartMonth(),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      
-        
-
       ),
     );
   }
