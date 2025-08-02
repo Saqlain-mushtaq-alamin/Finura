@@ -1,9 +1,9 @@
-from sqlalchemy import Column, Integer, String, Float, Text
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Text
 from . import Base  # imported from __init__.py
 
 class User(Base):
     __tablename__ = "user"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     pin_hash = Column(String, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
@@ -16,23 +16,46 @@ class User(Base):
 class ExpenseEntry(Base):
     __tablename__ = "expense_entry"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, nullable=False)
+    user_id = Column(String, ForeignKey("user.id"), nullable=False)  # Changed from Integer
     date = Column(String, nullable=False)
     day = Column(Integer, nullable=False)
     time = Column(String, nullable=False)
     mood = Column(Integer)
     description = Column(Text)
-    category = Column(String)
+    expense_amount = Column(Float)
+    category = Column(String)  
     expense_amount = Column(Float)
 
 class IncomeEntry(Base):
     __tablename__ = "income_entry"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, nullable=False)
+    user_id = Column(String, ForeignKey("user.id"), nullable=False)  # Changed from Integer
     date = Column(String, nullable=False)
     day = Column(Integer, nullable=False)
     time = Column(String, nullable=False)
     mood = Column(Integer)
     description = Column(Text)
-    category = Column(String)
     income_amount = Column(Float)
+    category = Column(String)  # <-- Optional
+
+
+
+class SavingGoal(Base):
+    __tablename__ = "saving_goal"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("user.id"), nullable=False)
+    target_amount = Column(Float, nullable=False)
+    frequency = Column(String, nullable=False)
+    start_date = Column(String, nullable=False)
+    end_date = Column(String)
+    current_saved = Column(Float, default=0)
+    description = Column(String)
+   
+class NoteEntry(Base):
+    __tablename__ = "note_entry"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("user.id"), nullable=False)
+    title = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    created_at = Column(String, nullable=False)
+    updated_at = Column(String, nullable=False)

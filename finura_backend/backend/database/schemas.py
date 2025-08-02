@@ -1,35 +1,58 @@
 from pydantic import BaseModel
+from typing import Optional
 
 # ---------- User ----------
 class UserCreate(BaseModel):
-    id: int
+    id: str
     pin_hash: str
     first_name: str
     last_name: str
     email: str
-    occupation: str | None = None
+    occupation: Optional[str] = None
     sex: str
     created_at: str
-    user_photo: str | None = None
+    user_photo: Optional[str] = None
 
 # ---------- Expense ----------
 class ExpenseCreate(BaseModel):
     id: int
-    user_id: int
+    user_id: str
     date: str
     day: int
     time: str
-    mood: int
-    description: str
+    mood: Optional[int] = None
+    description: Optional[str] = None
     expense_amount: float
+    category: Optional[str] = None
 
 # ---------- Income ----------
 class IncomeCreate(BaseModel):
     id: int
-    user_id: int
+    user_id: str
     date: str
     day: int
     time: str
-    mood: int
-    description: str
+    mood: Optional[int] = None
+    description: Optional[str] = None
     income_amount: float
+    category: Optional[str] = None  # optional as per your model
+
+
+class SavingGoalCreate(BaseModel):
+    id: int
+    user_id: str
+    target_amount: float
+    frequency: str
+    start_date: str
+    end_date: Optional[str] = None
+    current_saved: Optional[float] = 0
+    description: Optional[str] = None
+
+
+class NoteEntryCreate(BaseModel):
+    id: int
+    user_id: str
+    title: str
+    content: str
+    created_at: str
+    updated_at: str
