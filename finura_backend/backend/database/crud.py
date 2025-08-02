@@ -23,7 +23,7 @@ def create_expense(db: Session, payload: schemas.ExpenseCreate):
 
 def create_income(db: Session, payload: schemas.IncomeCreate):
     data = payload.dict()
-    data["category"] = predict_category(data["description"])
+    #data["category"] = predict_category(data["description"])
     db_income = models.IncomeEntry(**data)
     db.merge(db_income)
     db.commit()

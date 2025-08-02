@@ -33,3 +33,12 @@ def sync_expense(expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
 def sync_income(income: schemas.IncomeCreate, db: Session = Depends(get_db)):
     crud.create_income(db, income)
     return {"status": "ok", "item": "income"}
+
+#-----------for testing the code----------------------------
+@app.get("/")
+def root():
+    return {"message": "Finura Backend is running"}
+
+@app.get("/users")
+def get_users(db: Session = Depends(get_db)):
+    return db.query(models.User).all()

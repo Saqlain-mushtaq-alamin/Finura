@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 MODEL_DIR = Path(__file__).resolve().parent.parent / "models"
 
 VECTORIZER_PATH = MODEL_DIR / "tfidf_vectorizer.joblib"
-MODEL_PATH = MODEL_DIR / "logistic_model.joblib"
+MODEL_PATH = MODEL_DIR / "multinomial_nb_model.joblib"
 
 print(f"Loading vectorizer from: {VECTORIZER_PATH}")
 print(f"Loading model      from: {MODEL_PATH}")
