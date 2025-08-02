@@ -20,6 +20,9 @@ class _DashboardPageState extends State<DashboardPage> {
   List<FlSpot> incomeSpots = [];
   List<FlSpot> expenseSpots = [];
 
+  List<Map<String, dynamic>> moodExpenses = [];
+  final moodEmojis = ['😢', '😟', '😐', '🙂', '😄', '🤩'];
+
   @override
   void initState() {
     super.initState();
@@ -58,6 +61,25 @@ class _DashboardPageState extends State<DashboardPage> {
       ''',
       [widget.userId, startStr, endStr],
     );
+
+    // Fetch mood-expense entries
+    final moodResult = await db.rawQuery(
+      '''
+  SELECT mood, expense_amount 
+  FROM expense_entry 
+  WHERE user_id = ? AND date BETWEEN ? AND ?
+''',
+      [widget.userId, startStr, endStr],
+    );
+
+    moodExpenses = moodResult
+        .map(
+          (row) => {
+            'mood': int.tryParse(row['mood'].toString()) ?? 0,
+            'amount': (row['expense_amount'] ?? 0.0) as double,
+          },
+        )
+        .toList();
 
     totalIncome = (incomeResult.first['total'] ?? 0.0) as double;
     totalExpense = (expenseResult.first['total'] ?? 0.0) as double;
@@ -409,6 +431,7 @@ class _DashboardPageState extends State<DashboardPage> {
               },
             ),
           ),
+
           leftTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: true, reservedSize: 40),
           ),
@@ -440,6 +463,70 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMoodScatterChart() {
+    if (moodExpenses.isEmpty) {
+      return const Text(
+        "No mood-expense data",
+        style: TextStyle(color: Colors.grey),
+      );
+    }
+
+    final maxY = moodExpenses
+        .map((e) => e['amount'] as double)
+        .reduce((a, b) => a > b ? a : b);
+
+    return SizedBox(
+      height: 200,
+      width: double.infinity,
+      child: ScatterChart(
+        ScatterChartData(
+          scatterSpots: moodExpenses.map((entry) {
+            return ScatterSpot(
+              entry['mood'].toDouble(),
+              entry['amount'].toDouble(),
+              // color: Colors.blue,   // ✅ use `color` instead of `dotColor`
+              //radius: 6,            // ✅ use `radius` instead of `dotSize`
+            );
+          }).toList(),
+          minX: 0,
+          maxX: 5,
+          minY: 0,
+          maxY: maxY + 20,
+          gridData: FlGridData(show: true),
+          borderData: FlBorderData(show: true),
+          titlesData: FlTitlesData(
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: 1,
+                reservedSize: 50, // 👈 Increase this for more vertical height
+                getTitlesWidget: (value, meta) {
+                  final mood = value.toInt();
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      top: 8.0,
+                    ), // optional: more space above text
+                    child: Text(
+                      moodEmojis[mood.clamp(0, 5)],
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: true, reservedSize: 50),
+            ),
+            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          scatterTouchData: ScatterTouchData(enabled: true),
+        ),
       ),
     );
   }
@@ -572,6 +659,25 @@ class _DashboardPageState extends State<DashboardPage> {
                             : selectedRange == 'week'
                             ? _buildLineChartWeek()
                             : _buildLineChartMonth(),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Spending Mood Correlation",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          _buildMoodScatterChart(),
+                        ],
                       ),
                     ),
                   ],
