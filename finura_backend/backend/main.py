@@ -42,3 +42,7 @@ def root():
 @app.get("/users")
 def get_users(db: Session = Depends(get_db)):
     return db.query(models.User).all()
+
+@app.get("/income")
+def get_income(db: Session = Depends(get_db)):
+    return db.query(models.IncomeEntry).all()
