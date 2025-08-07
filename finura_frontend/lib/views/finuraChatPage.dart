@@ -44,13 +44,8 @@ class _FinuraChatPageState extends State<FinuraChatPage> {
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
             onTap: () {
-              navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      const FinuraChatPage(), //?need to work here
-                ),
-              );
+              Navigator.pop(context);
+
             },
             child: ClipOval(
               child: Image.asset(
