@@ -4,6 +4,7 @@ import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 // ignore: must_be_immutable
 class CalendarPage extends StatefulWidget {
@@ -219,7 +220,12 @@ class _CalendarPageState extends State<CalendarPage> {
                       final dbHelper = FinuraLocalDbHelper();
                       final db = await dbHelper.database;
 
+                      var uuid = Uuid();
+                      String noteID = uuid.v4(); // This is your new user ID
+
                       await db.insert('note_entry', {
+                        'id': noteID,
+
                         'user_id': widget.userID,
                         'title': title,
                         'content': note,
