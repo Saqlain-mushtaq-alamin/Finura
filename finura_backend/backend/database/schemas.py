@@ -15,7 +15,7 @@ class UserCreate(BaseModel):
 
 # ---------- Expense ----------
 class ExpenseCreate(BaseModel):
-    id: int
+    id: str
     user_id: str
     date: str
     day: int
@@ -27,7 +27,7 @@ class ExpenseCreate(BaseModel):
 
 # ---------- Income ----------
 class IncomeCreate(BaseModel):
-    id: int
+    id: str
     user_id: str
     date: str
     day: int
@@ -39,7 +39,7 @@ class IncomeCreate(BaseModel):
 
 
 class SavingGoalCreate(BaseModel):
-    id: int
+    id: str
     user_id: str
     target_amount: float
     frequency: str
@@ -50,7 +50,7 @@ class SavingGoalCreate(BaseModel):
 
 
 class NoteEntryCreate(BaseModel):
-    id: int
+    id: str
     user_id: str
     title: str
     content: str

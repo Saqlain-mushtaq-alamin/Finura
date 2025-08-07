@@ -15,7 +15,7 @@ class User(Base):
 
 class ExpenseEntry(Base):
     __tablename__ = "expense_entry"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     user_id = Column(String, ForeignKey("user.id"), nullable=False)  # Changed from Integer
     date = Column(String, nullable=False)
     day = Column(Integer, nullable=False)
@@ -28,7 +28,7 @@ class ExpenseEntry(Base):
 
 class IncomeEntry(Base):
     __tablename__ = "income_entry"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     user_id = Column(String, ForeignKey("user.id"), nullable=False)  # Changed from Integer
     date = Column(String, nullable=False)
     day = Column(Integer, nullable=False)
@@ -42,7 +42,7 @@ class IncomeEntry(Base):
 
 class SavingGoal(Base):
     __tablename__ = "saving_goal"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     user_id = Column(String, ForeignKey("user.id"), nullable=False)
     target_amount = Column(Float, nullable=False)
     frequency = Column(String, nullable=False)
@@ -53,7 +53,7 @@ class SavingGoal(Base):
    
 class NoteEntry(Base):
     __tablename__ = "note_entry"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     user_id = Column(String, ForeignKey("user.id"), nullable=False)
     title = Column(String, nullable=False)
     content = Column(Text, nullable=False)
