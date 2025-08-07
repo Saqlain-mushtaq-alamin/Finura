@@ -24,11 +24,6 @@ Future<void> storeUserData({
   final db = await FinuraLocalDbHelper().database;
 
   String? savedImagePath;
-  
-  
-
-
-
 
   if (photoPath != null) {
     // If it's an asset path, just store the string (no copying)

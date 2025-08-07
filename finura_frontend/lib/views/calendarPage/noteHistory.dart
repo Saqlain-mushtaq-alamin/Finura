@@ -35,7 +35,7 @@ class _NoteHistoryPageState extends State<NoteHistoryPage> {
   }
 
   // Delete a note by ID
-  Future<void> _deleteNote(int id) async {
+  Future<void> _deleteNote(String id) async {
     final db = await dbHelper.database;
     await db.delete('note_entry', where: 'id = ?', whereArgs: [id]);
     _loadNotes(); // Refresh after deletion

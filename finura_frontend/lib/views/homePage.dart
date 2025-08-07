@@ -10,6 +10,7 @@ import 'package:finura_frontend/views/setting/mainSetting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatefulWidget {
@@ -69,10 +70,14 @@ class _HomePageState extends State<HomePage> {
     List<int> custom = [7, 1, 2, 3, 4, 5, 6];
     int customDay = custom[day - 1];
 
+    var uuid = Uuid();
+    String incomeID = uuid.v4(); // This is your new user ID
+
     try {
       await db.insert(
         'income_entry', // 👈 Your table name
         {
+          'id': incomeID,
           'user_id': userId, // 👈 Foreign key to user table
           'date': date, // 👈 Formatted date
           'day': customDay, // 👈 Custom day format (if needed)
@@ -110,10 +115,13 @@ class _HomePageState extends State<HomePage> {
     // Optional: Custom day mapping (1 = Sat, 2 = Sun, etc.)
     List<int> custom = [7, 1, 2, 3, 4, 5, 6];
     int customDay = custom[day - 1];
+    var uuid = Uuid();
+    String epxenseID = uuid.v4(); // This is your new user ID
     try {
       await db.insert(
         'expense_entry', // 👈 Your table name
         {
+          'id': epxenseID,
           'user_id': userId, // 👈 Foreign key to user table
           'date': date, // 👈 Formatted date
           'day': customDay, // 👈 Custom day format (if needed)

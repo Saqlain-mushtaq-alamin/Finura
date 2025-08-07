@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Transaction {
-  final int id;
+  final String id;
   final String category;
 
   final double amount;
@@ -59,12 +59,12 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Future<void> deleteIncome(int id) async {
+  Future<void> deleteIncome(String id) async {
     final db = await FinuraLocalDbHelper().database;
     await db.delete('income_entry', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<void> deleteExpense(int id) async {
+  Future<void> deleteExpense(String id) async {
     final db = await FinuraLocalDbHelper().database;
     await db.delete('expense_entry', where: 'id = ?', whereArgs: [id]);
   }
@@ -80,10 +80,10 @@ class _HistoryPageState extends State<HistoryPage> {
       // Income entries
       ...incomeList.map(
         (i) => Transaction(
-          id: i['id'],
+          id: i['id'].toString(),
 
           category: i['description'] ?? 'Income',
-          amount: (i['income_amount'] ?? 0).toDouble(), // ✅ now this works
+          amount: (i['income_amount'] ?? 0).toDouble(),  
           dateTime: DateTime.parse("${i['date']} ${i['time']}"),
           isIncome: true,
         ),
@@ -91,10 +91,10 @@ class _HistoryPageState extends State<HistoryPage> {
       // Expense entries
       ...expenseList.map(
         (e) => Transaction(
-          id: e['id'],
+        id: e['id'].toString(),
 
           category: e['description'] ?? 'Expense',
-          amount: (e['expense_amount'] ?? 0).toDouble(), // ✅ now this works
+          amount: (e['expense_amount'] ?? 0).toDouble(),  
           dateTime: DateTime.parse("${e['date']} ${e['time']}"),
           isIncome: false,
         ),

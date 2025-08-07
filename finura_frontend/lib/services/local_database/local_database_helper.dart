@@ -53,7 +53,7 @@ class FinuraLocalDbHelper {
     // 🚨 New table for expense tracking
     await db.execute('''
     CREATE TABLE expense_entry (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL,
       date TEXT NOT NULL,
       day INTEGER NOT NULL,
@@ -69,7 +69,7 @@ class FinuraLocalDbHelper {
     //table for income tracking
     await db.execute('''
       CREATE TABLE income_entry (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL,
         date TEXT NOT NULL,
         day INTEGER NOT NULL,
@@ -85,7 +85,7 @@ class FinuraLocalDbHelper {
     // Table for saving goals
     await db.execute('''
       CREATE TABLE saving_goal (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL,
         target_amount REAL NOT NULL,
         frequency TEXT NOT NULL CHECK(frequency IN ('daily', 'weekly', 'monthly')),
@@ -101,7 +101,7 @@ class FinuraLocalDbHelper {
     // Table for note enrtes
     await db.execute('''
       CREATE TABLE note_entry (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL,
         title TEXT NOT NULL,
         content TEXT NOT NULL,
@@ -119,7 +119,7 @@ class FinuraLocalDbHelper {
       // Add any upgrade logic for version 2
       await db.execute('''
     CREATE TABLE expense_entry (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id TEXT PRIMARY KEY,,
       user_id INTEGER NOT NULL,
       date TEXT NOT NULL,
       day INTEGER NOT NULL,
@@ -136,7 +136,7 @@ class FinuraLocalDbHelper {
       // Add any upgrade logic for version 3
       await db.execute('''
         CREATE TABLE income_entry (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          id TEXT PRIMARY KEY,
           user_id INTEGER NOT NULL,
           date TEXT NOT NULL,
           day INTEGER NOT NULL,
@@ -152,7 +152,7 @@ class FinuraLocalDbHelper {
     if (oldVersion < 4) {
       await db.execute('''
       CREATE TABLE saving_goal (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+       id TEXT PRIMARY KEY,
         user_id INTEGER NOT NULL,
         target_amount REAL NOT NULL,
         frequency TEXT NOT NULL CHECK(frequency IN ('daily', 'weekly', 'monthly')),
@@ -167,7 +167,7 @@ class FinuraLocalDbHelper {
 
       await db.execute('''
       CREATE TABLE note_entry (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         user_id INTEGER NOT NULL,
         title TEXT NOT NULL,
         content TEXT NOT NULL,
@@ -194,9 +194,6 @@ class FinuraLocalDbHelper {
     print("📋 Tables in DB: $tables");
   }
 
-
-
-
   // Optional: Dev-only reset method (call this manually if needed)
   Future<void> resetDatabase() async {
     final dbPath = await getDatabasesPath();
@@ -205,7 +202,4 @@ class FinuraLocalDbHelper {
     _database = null; // Clear cached instance
     print("Database has been reset.");
   }
-
-  
-
 }
