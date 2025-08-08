@@ -6,7 +6,7 @@ Uses SQLAlchemy `merge()` so SQLite IDs are preserved (upsert style).
 from sqlalchemy.orm import Session
 
 from . import models, schemas
-from ..ml_models.classifier import predict_category
+from ..ml_classifier.classifier import predict_category
 
 
 def create_user(db: Session, payload: schemas.UserCreate):
