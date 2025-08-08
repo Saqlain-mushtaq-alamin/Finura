@@ -1,5 +1,4 @@
 from backend.ml_predictor.model_loader import load_model
-from backend.ml_predictor.preprocess import preprocess
 from backend.utils.encoders import category_encoder, time_encoder
 
 model = load_model()
