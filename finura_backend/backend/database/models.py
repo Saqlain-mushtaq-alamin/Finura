@@ -1,5 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Float, Text
 from . import Base  # imported from __init__.py
+from datetime import datetime
 
 class User(Base):
     __tablename__ = "user"
@@ -25,7 +26,7 @@ class ExpenseEntry(Base):
     description = Column(Text)
     expense_amount = Column(Float)
     category = Column(String)  
-    expense_amount = Column(Float)
+
 
 class IncomeEntry(Base):
     __tablename__ = "income_entry"
@@ -62,3 +63,16 @@ class NoteEntry(Base):
     content = Column(Text, nullable=False)
     created_at = Column(String, nullable=False)
     updated_at = Column(String, nullable=False)
+
+class Notification(Base):
+    __tablename__ = "notification"
+    id = Column(String, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("user.id"), nullable=False)
+    predicted_expense_amount = Column(Float, nullable=False)
+    predicted_mood = Column(Integer, nullable=False)
+    predicted_time = Column(String, nullable=False)
+    push_time = Column(String, nullable=False)
+    notif_message = Column(Text, nullable=False)
+    notif_status = Column(Integer, default=0)  # 0 = pending, 1 = sent
+    harm_level = Column(String, nullable=False)  # Very Good, Good, Bad, Very Bad
+    created_at = Column(String, default=lambda: datetime.now().isoformat())
