@@ -41,7 +41,9 @@ class IncomeCreate(BaseModel):
 class SavingGoalCreate(BaseModel):
     id: str
     user_id: str
-    target_amount: float
+    monthly_income: float
+    target_saving: float
+    target_expense_limit: float
     frequency: str
     start_date: str
     end_date: Optional[str] = None

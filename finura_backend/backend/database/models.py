@@ -11,6 +11,7 @@ class User(Base):
     occupation = Column(String)
     sex = Column(String)
     created_at = Column(String)
+    fcm_token = Column(String)
     user_photo = Column(String)
 
 class ExpenseEntry(Base):
@@ -44,8 +45,10 @@ class SavingGoal(Base):
     __tablename__ = "saving_goal"
     id = Column(String, primary_key=True, index=True)
     user_id = Column(String, ForeignKey("user.id"), nullable=False)
-    target_amount = Column(Float, nullable=False)
-    frequency = Column(String, nullable=False)
+    monthly_income = Column(Float, nullable=False)
+    target_saving = Column(Float, nullable=False)
+    target_expense_limit = Column(Float, nullable=False)
+    frequency = Column(Float, nullable= False)
     start_date = Column(String, nullable=False)
     end_date = Column(String)
     current_saved = Column(Float, default=0)

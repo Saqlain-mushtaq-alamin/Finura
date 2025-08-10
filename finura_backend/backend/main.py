@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from backend.database import SessionLocal, engine  # from database/__init__.py
 from backend.database import models             # triggers models import
 from backend.database import crud, schemas         # same package
+from backend.jobs.scheduler import start_scheduler
 
 # Create tables once on startup
 models.Base.metadata.create_all(bind=engine)
@@ -17,6 +18,11 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+@app.on_event("startup")
+def startup_event():
+    start_scheduler()
 
 # -------------------- Endpoints --------------------
 @app.post("/sync_user")

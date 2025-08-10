@@ -15,6 +15,7 @@ def run_prediction_job():
             input_data = preprocess(data)
             prediction = predict_next_day(input_data)
             print(f"Prediction for {user.email}: {prediction}")
+                  #here the notification method take pace
     db.close()
 
 def start_scheduler():
