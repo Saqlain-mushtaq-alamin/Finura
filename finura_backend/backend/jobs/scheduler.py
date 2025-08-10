@@ -4,6 +4,7 @@ from backend.database.models import User
 from backend.services.expense_service import get_last_7_days_expenses
 from backend.ml_predictor.predictor import predict_next_day
 from backend.ml_predictor.preprocess import preprocess
+from backend.services.notification_service import create_notification
 
 def run_prediction_job():
     db = SessionLocal()
@@ -16,6 +17,14 @@ def run_prediction_job():
             prediction = predict_next_day(input_data)
             print(f"Prediction for {user.email}: {prediction}")
                   #here the notification method take pace
+            # Create notification
+            create_notification(
+                db=db,
+                user_id=user.id,
+                predicted_expense_amount=prediction["expense_amount"],
+                predicted_mood=prediction["mood"],
+                predicted_time=prediction["time"]
+            )
     db.close()
 
 def start_scheduler():
