@@ -83,20 +83,23 @@ class FinuraLocalDbHelper {
     ''');
 
     // Table for saving goals
+    // Updated Saving Goal table
     await db.execute('''
-      CREATE TABLE saving_goal (
-        id TEXT PRIMARY KEY,
-        user_id TEXT NOT NULL,
-        target_amount REAL NOT NULL,
-        frequency TEXT NOT NULL CHECK(frequency IN ('daily', 'weekly', 'monthly')),
-        start_date TEXT NOT NULL,
-        end_date TEXT,
-        current_saved REAL NOT NULL DEFAULT 0,
-        description TEXT,
-        synced INTEGER NOT NULL DEFAULT 0,
-        FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
-      )
-    ''');
+  CREATE TABLE saving_goal (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    monthly_income REAL NOT NULL,
+    target_saving REAL NOT NULL,
+    target_expense_limit REAL NOT NULL,
+    frequency REAL NOT NULL,
+    start_date TEXT NOT NULL,
+    end_date TEXT,
+    current_saved REAL DEFAULT 0,
+    description TEXT,
+    synced INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+  )
+''');
 
     // Table for note enrtes
     await db.execute('''
@@ -110,6 +113,23 @@ class FinuraLocalDbHelper {
         FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
       )
     ''');
+
+    // New Notification table
+    await db.execute('''
+  CREATE TABLE notification (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    predicted_expense_amount REAL NOT NULL,
+    predicted_mood INTEGER NOT NULL,
+    predicted_time TEXT NOT NULL,
+    push_time TEXT NOT NULL,
+    notif_message TEXT NOT NULL,
+    notif_status INTEGER DEFAULT 0,
+    harm_level TEXT NOT NULL,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+  )
+''');
 
     print('Database created with expense_entry table.');
   }
@@ -177,6 +197,44 @@ class FinuraLocalDbHelper {
       )
     ''');
     }
+    if (oldVersion < 5) {
+      // Add the updated saving_goal
+      await db.execute('DROP TABLE IF EXISTS saving_goal');
+      await db.execute('''
+    CREATE TABLE saving_goal (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      monthly_income REAL NOT NULL,
+      target_saving REAL NOT NULL,
+      target_expense_limit REAL NOT NULL,
+      frequency REAL NOT NULL,
+      start_date TEXT NOT NULL,
+      end_date TEXT,
+      current_saved REAL DEFAULT 0,
+      description TEXT,
+      synced INTEGER NOT NULL DEFAULT 0,
+      FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+    )
+  ''');
+
+      // Add notification table
+      await db.execute('''
+    CREATE TABLE notification (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      predicted_expense_amount REAL NOT NULL,
+      predicted_mood INTEGER NOT NULL,
+      predicted_time TEXT NOT NULL,
+      push_time TEXT NOT NULL,
+      notif_message TEXT NOT NULL,
+      notif_status INTEGER DEFAULT 0,
+      harm_level TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
+    )
+  ''');
+    }
+
     print('Database upgraded from version $oldVersion to $newVersion.');
   }
 
