@@ -1,7 +1,6 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 
 class PlanningPage extends StatefulWidget {
@@ -79,6 +78,8 @@ class _PlanningPageState extends State<PlanningPage> {
 
     setState(() {}); // Refresh expense limit display
 
+
+
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text("Goal saved successfully!")));
@@ -131,66 +132,102 @@ class _PlanningPageState extends State<PlanningPage> {
               ),
             ),
 
-            const SizedBox(height: 20),
-
             Container(
-              
-              child: Row(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.all(8.0),
+
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: Text("Month: $selectedMonth")),
-                  IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () => _selectMonth(context),
+                  const SizedBox(height: 16),
+                  // Row with month + icon
+                  Container(
+                    height: 60,
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.grey, width: 3.0),
+
+                      borderRadius: BorderRadius.circular(50),
+
+
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            " $selectedMonth",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              left: BorderSide(color: Colors.grey, width: 3.0),
+                            ),
+                          ),
+
+                          child: IconButton(
+                            icon: const Icon(Icons.calendar_today),
+                            onPressed: () => _selectMonth(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Monthly income
+                  TextField(
+                    controller: incomeController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: "Monthly Income",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Target saving
+                  TextField(
+                    controller: savingController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: "Target Saving",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Description
+                  TextField(
+                    controller: descriptionController,
+                    maxLines: 2,
+                    decoration: const InputDecoration(
+                      labelText: "Description",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Submit button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _submitGoal,
+                      
+
+                      child: const Text("Submit"),
+
+                    ),
                   ),
                 ],
               ),
-
-              const SizedBox(height: 16),
-
-              // Monthly income
-              TextField(
-                controller: incomeController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "Monthly Income",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Target saving
-              TextField(
-                controller: savingController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "Target Saving",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Description
-              TextField(
-                controller: descriptionController,
-                maxLines: 2,
-                decoration: const InputDecoration(
-                  labelText: "Description",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Submit
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _submitGoal,
-                  child: const Text("Submit"),
-                ),
-              ),
             ),
-
-            // Month selector
           ],
         ),
       ),
