@@ -76,9 +76,11 @@ class _PlanningPageState extends State<PlanningPage> {
       print('Error inserting saving goal entry: $e');
     }
 
+    incomeController.clear();
+    savingController.clear();
+    descriptionController.clear();
+
     setState(() {}); // Refresh expense limit display
-
-
 
     ScaffoldMessenger.of(
       context,
@@ -145,13 +147,10 @@ class _PlanningPageState extends State<PlanningPage> {
                     height: 60,
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-
                       color: Colors.grey[200],
                       border: Border.all(color: Colors.grey, width: 3.0),
 
                       borderRadius: BorderRadius.circular(50),
-
-
                     ),
                     child: Row(
                       children: [
@@ -219,10 +218,8 @@ class _PlanningPageState extends State<PlanningPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _submitGoal,
-                      
 
                       child: const Text("Submit"),
-
                     ),
                   ),
                 ],
