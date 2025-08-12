@@ -6,6 +6,7 @@ import 'package:finura_frontend/views/calendarPage/calendar.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:finura_frontend/views/helpPage/help.dart';
 import 'package:finura_frontend/views/historyPage/historyPage.dart';
+import 'package:finura_frontend/views/panning/planning.dart';
 import 'package:finura_frontend/views/setting/mainSetting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -492,6 +493,16 @@ class _HomePageState extends State<HomePage> {
                       GestureDetector(
                         onTap: () {
                           print("Icon 2 tapped"); //?need to change this
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PlanningPage(
+                                db: FinuraLocalDbHelper().database,
+                                
+                                userId: widget.user_Id,
+                              ),
+                            ),
+                          );  
                         },
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
