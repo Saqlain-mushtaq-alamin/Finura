@@ -6,6 +6,7 @@ import 'package:finura_frontend/views/calendarPage/calendar.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:finura_frontend/views/helpPage/help.dart';
 import 'package:finura_frontend/views/historyPage/historyPage.dart';
+import 'package:finura_frontend/views/notification/notificationpage.dart';
 import 'package:finura_frontend/views/panning/planning.dart';
 import 'package:finura_frontend/views/setting/mainSetting.dart';
 import 'package:flutter/material.dart';
@@ -492,12 +493,11 @@ class _HomePageState extends State<HomePage> {
                       // Icon 2: Planning icon button
                       GestureDetector(
                         onTap: () async {
-                      
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  PlanningPage( userId: widget.user_Id),
+                                  PlanningPage(userId: widget.user_Id),
                             ),
                           );
                         },
@@ -879,6 +879,13 @@ class _HomePageState extends State<HomePage> {
               GestureDetector(
                 onTap: () {
                   print("Scan Icon tapped"); //?need to change this
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          NotificationPage(userId: widget.user_Id),
+                    ),
+                  );
                 },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
