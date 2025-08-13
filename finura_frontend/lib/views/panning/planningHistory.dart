@@ -43,7 +43,7 @@ Future<void> deleteSavingGoal(String id) async {
 class PlanningHistoryPage extends StatefulWidget {
   final String userId;
 
-  const PlanningHistoryPage({Key? key, required this.userId}) : super(key: key);
+  const PlanningHistoryPage({super.key, required this.userId});
 
   @override
   State<PlanningHistoryPage> createState() => _PlanningHistoryPageState();
@@ -81,7 +81,7 @@ class _PlanningHistoryPageState extends State<PlanningHistoryPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No planning history found.'));
+            return Center(child: Text('No planning history found.'));
           }
           final goals = snapshot.data!;
           return ListView.builder(

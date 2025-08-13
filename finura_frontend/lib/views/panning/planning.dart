@@ -7,9 +7,7 @@ import 'package:uuid/uuid.dart';
 class PlanningPage extends StatefulWidget {
   final String userId;
 
-  final dynamic db;
-
-  const PlanningPage({super.key, required this.db, required this.userId});
+  const PlanningPage({super.key, required this.userId});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -57,18 +55,30 @@ class _PlanningPageState extends State<PlanningPage> {
     final targetSaving = double.tryParse(savingController.text) ?? 0;
     final description = descriptionController.text;
 
+    // Parse selectedMonth to DateTime
+    final parsedMonth = DateFormat('MMMM yyyy').parse(selectedMonth);
+
+    // Calculate start date (first day of selected month)
+    final startDate = DateTime(parsedMonth.year, parsedMonth.month, 1);
+
+    // Calculate end date (last day of selected month)
+    final endDate = DateTime(parsedMonth.year, parsedMonth.month + 1, 0);
+
     // Calculate expense limit
     expenseLimit = monthlyIncome - targetSaving;
+
+    print("user id is -------------------------> ${widget.userId}");
+
     try {
-      await widget.db.insert('saving_goal', {
+      await db.insert('saving_goal', {
         'id': const Uuid().v4(),
         'user_id': widget.userId,
         'monthly_income': monthlyIncome,
         'target_saving': targetSaving,
         'target_expense_limit': expenseLimit,
         'frequency': 1,
-        'start_date': DateFormat('yyyy-MM-dd').format(DateTime.now()),
-        'end_date': null,
+        'start_date': DateFormat('yyyy-MM-dd').format(startDate),
+        'end_date': DateFormat('yyyy-MM-dd').format(endDate),
         'current_saved': 0,
         'description': description,
         'synced': 0,
@@ -99,12 +109,12 @@ class _PlanningPageState extends State<PlanningPage> {
             icon: const Icon(Icons.history),
             onPressed: () {
               // Navigate to history page
+              print("user id is -------------------------> ${widget.userId}");
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PlanningHistoryPage(
-                    userId: widget.userId, 
-                  ),
+                  builder: (context) =>
+                      PlanningHistoryPage(userId: widget.userId),
                 ),
               );
             },
