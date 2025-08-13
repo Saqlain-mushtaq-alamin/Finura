@@ -171,7 +171,7 @@ class _PlanningPageState extends State<PlanningPage> {
                   ),
                   const SizedBox(width: 80), // Space between text and image
                   Image.asset(
-                    'assets/icons/plaing1.gif', // Replace with your actual image path
+                    'assets/gif/plaing1.gif', // Replace with your actual image path
                     height: 150,
                     width: 150,
                   ),
