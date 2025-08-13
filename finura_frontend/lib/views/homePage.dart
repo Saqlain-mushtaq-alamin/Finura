@@ -39,6 +39,20 @@ class _HomePageState extends State<HomePage> {
   int selectedMood = 0;
 
   String? selectedOption;
+  NotificationModel? _latestNotification;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLatestNotification();
+  }
+
+  Future<void> _loadLatestNotification() async {
+    final latest = await fetchLatestNotification(widget.user_Id);
+    setState(() {
+      _latestNotification = latest;
+    });
+  }
 
   ImageProvider _buildImageProvider(String path) {
     if (path.startsWith('http')) {
@@ -50,6 +64,25 @@ class _HomePageState extends State<HomePage> {
     } else {
       return const AssetImage('assets/default_user/fallback.jpg');
     }
+  }
+
+  // notification fetching logic
+  Future<NotificationModel?> fetchLatestNotification(String userId) async {
+    final db = await FinuraLocalDbHelper().database;
+
+    final result = await db.query(
+      'notification',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+      orderBy: 'push_time DESC',
+      limit: 1,
+    );
+
+    if (result.isNotEmpty) {
+      return NotificationModel.fromMap(result.first);
+    }
+
+    return null; // No notifications found
   }
 
   Future<void> insertIncomeEntry({
@@ -658,16 +691,34 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(12),
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 width: double.infinity,
-                height: 100.0, // Adjust height as needed
+                height: 100.0, // You can adjust height if needed
                 decoration: BoxDecoration(
                   color: Colors.yellow[100],
                   border: Border.all(color: Colors.orange),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Notification will appear here.', //?this should be changed with last notification
-                  style: TextStyle(color: Colors.black87),
-                ),
+                child: _latestNotification == null
+                    ? const Text(
+                        'No notifications yet.',
+                        style: TextStyle(color: Colors.black87),
+                      )
+                    : SingleChildScrollView(
+                        // 👈 makes inner content scrollable
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "💸💸",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              _latestNotification!.notifMessage,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
               ),
 
               // Box 4: finura chat box
