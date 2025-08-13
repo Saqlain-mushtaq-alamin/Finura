@@ -1,6 +1,7 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:finura_frontend/views/panning/planningHistory.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -67,7 +68,20 @@ class _PlanningPageState extends State<PlanningPage> {
     // Calculate expense limit
     expenseLimit = monthlyIncome - targetSaving;
 
-    print("user id is -------------------------> ${widget.userId}");
+    if (monthlyIncome < 0 || targetSaving < 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Income and saving must be positive numbers."),
+        ),
+      );
+      return;
+    }
+    if (expenseLimit < 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Expense limit cannot be negative.")),
+      );
+      return;
+    }
 
     try {
       await db.insert('saving_goal', {
@@ -109,7 +123,6 @@ class _PlanningPageState extends State<PlanningPage> {
             icon: const Icon(Icons.history),
             onPressed: () {
               // Navigate to history page
-              print("user id is -------------------------> ${widget.userId}");
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -202,7 +215,14 @@ class _PlanningPageState extends State<PlanningPage> {
                   // Monthly income
                   TextField(
                     controller: incomeController,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}'),
+                      ),
+                    ],
                     decoration: const InputDecoration(
                       labelText: "Monthly Income",
                       border: OutlineInputBorder(),
@@ -210,15 +230,23 @@ class _PlanningPageState extends State<PlanningPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Target saving
+                  // Target Saving
                   TextField(
                     controller: savingController,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}'),
+                      ),
+                    ],
                     decoration: const InputDecoration(
                       labelText: "Target Saving",
                       border: OutlineInputBorder(),
                     ),
                   ),
+
                   const SizedBox(height: 16),
 
                   // Description
