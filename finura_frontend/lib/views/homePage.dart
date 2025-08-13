@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:finura_frontend/views/DashboardPage/dashboard.dart';
 import 'package:finura_frontend/views/calendarPage/calendar.dart';
+import 'package:finura_frontend/views/defoult/payment.dart';
 import 'package:finura_frontend/views/finuraChatPage.dart';
 import 'package:finura_frontend/views/helpPage/help.dart';
 import 'package:finura_frontend/views/historyPage/historyPage.dart';
@@ -224,6 +225,13 @@ class _HomePageState extends State<HomePage> {
               child: GestureDetector(
                 onTap: () {
                   print("AppBaar Icon tapped"); //?need to change this
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          PaymentPage(), // Navigate to PaymentPage
+                    ),
+                  );
                 },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
