@@ -5,14 +5,35 @@ import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
+Future<void> insertWelcomeNotification(String userId) async {
+  final db = await FinuraLocalDbHelper().database;
+  final now = DateTime.now().toIso8601String();
+  final formattedTime = DateFormat('yyyy-MM-dd – hh:mm a').format(now as DateTime);
+
+  await db.insert('notification', {
+    'id': const Uuid().v4(),
+    'user_id': userId,
+    'predicted_expense_amount': 0.0,
+    'predicted_mood': 5, // default neutral/happy mood
+    'predicted_time': formattedTime,
+    'push_time': now,
+    'notif_message':
+        'Welcome to Finura! Let’s start building your financial journey.',
+    'notif_status': 0,
+    'harm_level': ' ',
+    'created_at': now,
+  });
+}
+
 //  function for simulate storing user data in the database
-Future<void> storeUserData({
+Future<String> storeUserData({
   required String firstName,
   required String lastName,
   required String email,
@@ -39,9 +60,9 @@ Future<void> storeUserData({
       savedImagePath = newImagePath;
     }
   }
-  
-var uuid = Uuid();
-String userId = uuid.v4(); // This is your new user ID
+
+  var uuid = Uuid();
+  String userId = uuid.v4(); // This is your new user ID
 
   await db.insert('user', {
     'id': userId,
@@ -57,6 +78,7 @@ String userId = uuid.v4(); // This is your new user ID
   });
 
   print('User stored successfully.');
+  return userId;
 }
 
 // Function to hash the pin using SHA256
@@ -209,9 +231,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         finalPhotoPath = 'assets/default_user/female_user.jpg';
                       }
                     }
+
                     if (_formKey.currentState!.validate()) {
-                      // Save user data to database
-                      await storeUserData(
+                      final userId = await storeUserData(
                         firstName: _firstNameController.text.trim(),
                         lastName: _lastNameController.text.trim(),
                         email: _emailController.text.trim(),
@@ -220,6 +242,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         pin: hashPin(_pinController.text.trim()),
                         photoPath: finalPhotoPath,
                       );
+
+                      await insertWelcomeNotification(userId);
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Registration submitted!'),
@@ -231,6 +256,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       );
                     }
                   },
+
                   child: const Text('Submit'),
                 ),
               ],
