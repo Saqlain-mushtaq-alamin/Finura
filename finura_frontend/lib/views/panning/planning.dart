@@ -150,17 +150,30 @@ class _PlanningPageState extends State<PlanningPage> {
                   bottomRight: Radius.circular(50),
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  const Text("Expense limit", style: TextStyle(fontSize: 25)),
-                  const SizedBox(height: 10),
-                  Text(
-                    "${expenseLimit.toStringAsFixed(2)}",
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Expense limit",
+                        style: TextStyle(fontSize: 25),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "${expenseLimit.toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 80), // Space between text and image
+                  Image.asset(
+                    'assets/icons/plaing1.gif', // Replace with your actual image path
+                    height: 150,
+                    width: 150,
                   ),
                 ],
               ),
