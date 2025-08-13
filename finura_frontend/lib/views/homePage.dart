@@ -491,19 +491,18 @@ class _HomePageState extends State<HomePage> {
                       ),
                       // Icon 2: Planning icon button
                       GestureDetector(
-                        onTap: () {
-                          print("Icon 2 tapped"); //?need to change this
+                        onTap: () async {
+                          final db = await FinuraLocalDbHelper()
+                              .database; // ✅ await the actual db
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PlanningPage(
-                                db: FinuraLocalDbHelper().database,
-                                
-                                userId: widget.user_Id,
-                              ),
+                              builder: (context) =>
+                                  PlanningPage(db: db, userId: widget.user_Id),
                             ),
-                          );  
+                          );
                         },
+
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
