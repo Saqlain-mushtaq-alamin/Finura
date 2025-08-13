@@ -28,7 +28,7 @@ class FinuraLocalDbHelper {
 
     return await openDatabase(
       dbFilePath,
-      version: 4,
+      version: 5,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -139,7 +139,7 @@ class FinuraLocalDbHelper {
       // Add any upgrade logic for version 2
       await db.execute('''
     CREATE TABLE expense_entry (
-      id TEXT PRIMARY KEY,,
+      id TEXT PRIMARY KEY,
       user_id INTEGER NOT NULL,
       date TEXT NOT NULL,
       day INTEGER NOT NULL,

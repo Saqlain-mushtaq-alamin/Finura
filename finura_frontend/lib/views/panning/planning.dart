@@ -1,4 +1,5 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
+import 'package:finura_frontend/views/panning/planningHistory.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
@@ -98,6 +99,14 @@ class _PlanningPageState extends State<PlanningPage> {
             icon: const Icon(Icons.history),
             onPressed: () {
               // Navigate to history page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlanningHistoryPage(
+                    userId: widget.userId, 
+                  ),
+                ),
+              );
             },
           ),
         ],
@@ -114,8 +123,8 @@ class _PlanningPageState extends State<PlanningPage> {
               decoration: BoxDecoration(
                 color: Colors.green[100],
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(50),
+                  bottomRight: Radius.circular(50),
                 ),
               ),
               child: Column(
@@ -141,7 +150,7 @@ class _PlanningPageState extends State<PlanningPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 30),
                   // Row with month + icon
                   Container(
                     height: 60,
