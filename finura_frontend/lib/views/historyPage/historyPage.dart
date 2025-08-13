@@ -83,7 +83,7 @@ class _HistoryPageState extends State<HistoryPage> {
           id: i['id'].toString(),
 
           category: i['description'] ?? 'Income',
-          amount: (i['income_amount'] ?? 0).toDouble(),  
+          amount: (i['income_amount'] ?? 0).toDouble(),
           dateTime: DateTime.parse("${i['date']} ${i['time']}"),
           isIncome: true,
         ),
@@ -91,10 +91,10 @@ class _HistoryPageState extends State<HistoryPage> {
       // Expense entries
       ...expenseList.map(
         (e) => Transaction(
-        id: e['id'].toString(),
+          id: e['id'].toString(),
 
           category: e['description'] ?? 'Expense',
-          amount: (e['expense_amount'] ?? 0).toDouble(),  
+          amount: (e['expense_amount'] ?? 0).toDouble(),
           dateTime: DateTime.parse("${e['date']} ${e['time']}"),
           isIncome: false,
         ),
@@ -152,8 +152,34 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.delete, color: Colors.grey),
-            onPressed: () => _deleteTransaction(txn),
+            icon: Icon(Icons.delete, color: Colors.red),
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Delete Transaction'),
+                  content: Text(
+                    'Are you sure you want to delete this transaction?',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+              if (confirm == true) {
+                _deleteTransaction(txn);
+              }
+            },
           ),
         ],
       ),

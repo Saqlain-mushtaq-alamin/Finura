@@ -115,7 +115,7 @@ class _NoteHistoryPageState extends State<NoteHistoryPage> {
                                   final confirm = await showDialog<bool>(
                                     context: context,
                                     builder: (context) => AlertDialog(
-                                      title: Text('Delete Goal'),
+                                      title: Text('Delete Note'),
                                       content: Text(
                                         'Are you sure you want to delete this note?',
                                       ),
