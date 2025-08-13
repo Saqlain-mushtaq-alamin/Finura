@@ -30,7 +30,8 @@ class NotificationModel {
     return NotificationModel(
       id: map['id'],
       userId: map['user_id'],
-      predictedExpenseAmount: map['predicted_expense_amount']?.toDouble() ?? 0.0,
+      predictedExpenseAmount:
+          map['predicted_expense_amount']?.toDouble() ?? 0.0,
       predictedMood: map['predicted_mood'],
       predictedTime: map['predicted_time'],
       pushTime: map['push_time'],
@@ -132,7 +133,7 @@ class _NotificationPageState extends State<NotificationPage> {
                             notif.predictedTime,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                              fontSize: 18,
                             ),
                           ),
                         ),
@@ -144,7 +145,8 @@ class _NotificationPageState extends State<NotificationPage> {
                               builder: (context) => AlertDialog(
                                 title: const Text('Delete Notification'),
                                 content: const Text(
-                                    'Are you sure you want to delete this notification?'),
+                                  'Are you sure you want to delete this notification?',
+                                ),
                                 actions: [
                                   TextButton(
                                     onPressed: () =>
@@ -174,10 +176,10 @@ class _NotificationPageState extends State<NotificationPage> {
 
                     // Row for Mood and Harm Level
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text("Mood: ${notif.predictedMood}"),
-                        Text("Harm Level: ${notif.harmLevel}"),
+                        Text(" ${notif.predictedMood}"),
+                        Text(" ${notif.harmLevel}"),
                       ],
                     ),
 
