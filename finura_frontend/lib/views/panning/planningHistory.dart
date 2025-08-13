@@ -70,8 +70,10 @@ class _PlanningHistoryPageState extends State<PlanningHistoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Planning History'),
-        centerTitle: true,
+        centerTitle: false,
+        backgroundColor: Colors.green[100],
       ),
+
       body: FutureBuilder<List<SavingGoal>>(
         future: _futureGoals,
         builder: (context, snapshot) {
@@ -119,7 +121,7 @@ class _PlanningHistoryPageState extends State<PlanningHistoryPage> {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                'Start Date: ${goal.startDate.toLocal().toString().split(' ')[0]}',
+                                ' ${goal.startDate.toLocal().toString().split(' ')[0]}',
                                 style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 14,
@@ -135,15 +137,22 @@ class _PlanningHistoryPageState extends State<PlanningHistoryPage> {
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: Text('Delete Goal'),
-                                content: Text('Are you sure you want to delete this goal?'),
+                                content: Text(
+                                  'Are you sure you want to delete this goal?',
+                                ),
                                 actions: [
                                   TextButton(
-                                    onPressed: () => Navigator.pop(context, false),
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
                                     child: Text('Cancel'),
                                   ),
                                   TextButton(
-                                    onPressed: () => Navigator.pop(context, true),
-                                    child: Text('Delete', style: TextStyle(color: Colors.red)),
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    child: Text(
+                                      'Delete',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -158,10 +167,7 @@ class _PlanningHistoryPageState extends State<PlanningHistoryPage> {
                     const SizedBox(height: 8),
                     Divider(),
                     const SizedBox(height: 8),
-                    Text(
-                      goal.description,
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    Text(goal.description, style: TextStyle(fontSize: 16)),
                   ],
                 ),
               );
