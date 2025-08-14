@@ -172,11 +172,10 @@ class _SavingMonitorPageState extends State<SavingMonitorPage> {
                     currentMonth,
                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
-
-            const SizedBox(height: 10),
 
             // Line Chart
             Expanded(
@@ -186,16 +185,23 @@ class _SavingMonitorPageState extends State<SavingMonitorPage> {
                   minX: 1,
                   maxX: 30,
                   minY: 0,
+                  backgroundColor: Color.fromARGB(255, 31, 226, 168),
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(showTitles: true),
                     ),
                   ),
-                  gridData: FlGridData(show: true),
-                  borderData: FlBorderData(show: true),
+                  gridData: FlGridData(show: false),
+                  borderData: FlBorderData(show: false),
                   lineBarsData: [
                     // Income (Green)
                     LineChartBarData(
@@ -229,94 +235,106 @@ class _SavingMonitorPageState extends State<SavingMonitorPage> {
               ),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 30),
 
             // Saving Goals List
             Expanded(
               flex: 2,
-              child: ListView.builder(
-                itemCount: savingGoals.length,
-                itemBuilder: (context, index) {
-                  final goal = savingGoals[index];
-                  double progress = 0;
-                  if (goal['target_saving'] > 0) {
-                    progress = (goal['current_saved'] / goal['target_saving'])
-                        .clamp(0.0, 1.0);
-                  }
-                  String goalMonth = DateFormat.MMMM().format(
-                    DateTime.parse(goal['start_date']),
-                  );
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 183, 238, 221),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        currentMonth = goalMonth;
-                      });
-                      _loadAllData(month: goalMonth);
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 6),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.blue, width: 1),
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 5,
-                          ),
-                        ],
+                child: ListView.builder(
+                  itemCount: savingGoals.length,
+                  itemBuilder: (context, index) {
+                    final goal = savingGoals[index];
+                    double progress = 0;
+                    if (goal['target_saving'] > 0) {
+                      progress = (goal['current_saved'] / goal['target_saving'])
+                          .clamp(0.0, 1.0);
+                    }
+                    String goalMonth = DateFormat.MMMM().format(
+                      DateTime.parse(goal['start_date']),
+                    );
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          currentMonth = goalMonth;
+                        });
+                        _loadAllData(month: goalMonth);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 6),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.blue, width: 1),
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Month & % Left
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  goalMonth,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "${((1 - progress) * 100).toStringAsFixed(0)}% left",
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Progress Line
+                            Stack(
+                              children: [
+                                Container(
+                                  height: 6,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.lightBlue.shade100,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                Container(
+                                  height: 6,
+                                  width:
+                                      MediaQuery.of(context).size.width *
+                                      progress,
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text("Target Saving: \$${goal['target_saving']}"),
+                          ],
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Month & % Left
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                goalMonth,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "${((1 - progress) * 100).toStringAsFixed(0)}% left",
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          // Progress Line
-                          Stack(
-                            children: [
-                              Container(
-                                height: 6,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Colors.lightBlue.shade100,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                              Container(
-                                height: 6,
-                                width:
-                                    MediaQuery.of(context).size.width *
-                                    progress,
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Text("Target Saving: \$${goal['target_saving']}"),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],
