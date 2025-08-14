@@ -30,73 +30,86 @@ class _SavingMonitorPageState extends State<SavingMonitorPage> {
     final db = await dbHelper.database;
     final String filterMonth = month ?? currentMonth;
 
-    // Get all saving goals
+    // Fetch all saving goals
     savingGoals = await db.query(
       'saving_goal',
       where: 'user_id = ?',
       whereArgs: [widget.userId],
     );
 
-    // Fetch income & expense entries for the month
+    // Total Saving = sum of current_saved for this month
+    final savingSumResult = await db.rawQuery(
+      '''
+    SELECT SUM(current_saved) as total_saved
+    FROM saving_goal
+    WHERE user_id = ? AND strftime('%m', start_date) = ?
+  ''',
+      [widget.userId, _monthToNumber(filterMonth)],
+    );
+
+    totalSaving =
+        (savingSumResult.first['total_saved'] as num?)?.toDouble() ?? 0;
+
+    // Fetch income for the month
     final incomeEntries = await db.rawQuery(
       '''
-      SELECT day, SUM(income_amount) as total_income
-      FROM income_entry
-      WHERE user_id = ? AND strftime('%m', date) = ?
-      GROUP BY day
-    ''',
+    SELECT day, SUM(income_amount) as total_income
+    FROM income_entry
+    WHERE user_id = ? AND strftime('%m', date) = ?
+    GROUP BY day
+  ''',
       [widget.userId, _monthToNumber(filterMonth)],
     );
 
+    // Fetch expenses for the month
     final expenseEntries = await db.rawQuery(
       '''
-      SELECT day, SUM(expense_amount) as total_expense
-      FROM expense_entry
-      WHERE user_id = ? AND strftime('%m', date) = ?
-      GROUP BY day
-    ''',
+    SELECT day, SUM(expense_amount) as total_expense
+    FROM expense_entry
+    WHERE user_id = ? AND strftime('%m', date) = ?
+    GROUP BY day
+  ''',
       [widget.userId, _monthToNumber(filterMonth)],
     );
 
-    // Build line chart data
-    incomeData = incomeEntries
-        .map(
-          (e) => FlSpot(
-            (e['day'] as int).toDouble(),
-            (e['total_income'] as num?)?.toDouble() ?? 0,
-          ),
-        )
-        .toList();
+    // Fetch savings for the month from saving_goal table
+    final savingEntries = await db.rawQuery(
+      '''
+    SELECT day, SUM(current_saved) as total_saved
+    FROM saving_goal
+    JOIN (
+      SELECT DISTINCT date, CAST(strftime('%d', date) AS INTEGER) as day
+      FROM expense_entry WHERE user_id = ?
+    ) days ON 1=1
+    WHERE user_id = ? AND strftime('%m', start_date) = ?
+    GROUP BY day
+  ''',
+      [widget.userId, widget.userId, _monthToNumber(filterMonth)],
+    );
 
-    expenseData = expenseEntries
-        .map(
-          (e) => FlSpot(
-            (e['day'] as int).toDouble(),
-            (e['total_expense'] as num?)?.toDouble() ?? 0,
-          ),
-        )
-        .toList();
+    // Convert to maps for fast lookup
+    final incomeMap = {
+      for (var e in incomeEntries)
+        (e['day'] as int): (e['total_income'] as num?)?.toDouble() ?? 0,
+    };
+    final expenseMap = {
+      for (var e in expenseEntries)
+        (e['day'] as int): (e['total_expense'] as num?)?.toDouble() ?? 0,
+    };
+    final savingMap = {
+      for (var e in savingEntries)
+        (e['day'] as int): (e['total_saved'] as num?)?.toDouble() ?? 0,
+    };
 
-    // Calculate savings = income - expense for each day
+    // Fill missing days with 0
+    incomeData = [];
+    expenseData = [];
     savingData = [];
-    for (var i = 1; i <= 30; i++) {
-      double income = incomeData
-          .firstWhere(
-            (spot) => spot.x == i.toDouble(),
-            orElse: () => const FlSpot(0, 0),
-          )
-          .y;
-      double expense = expenseData
-          .firstWhere(
-            (spot) => spot.x == i.toDouble(),
-            orElse: () => const FlSpot(0, 0),
-          )
-          .y;
-      savingData.add(FlSpot(i.toDouble(), income - expense));
+    for (int day = 1; day <= 30; day++) {
+      incomeData.add(FlSpot(day.toDouble(), incomeMap[day] ?? 0));
+      expenseData.add(FlSpot(day.toDouble(), expenseMap[day] ?? 0));
+      savingData.add(FlSpot(day.toDouble(), savingMap[day] ?? 0));
     }
-
-    // Total saving for the month
-    totalSaving = savingData.fold(0, (sum, spot) => sum + spot.y);
 
     setState(() {});
   }
@@ -144,24 +157,35 @@ class _SavingMonitorPageState extends State<SavingMonitorPage> {
                       sideTitles: SideTitles(showTitles: true),
                     ),
                   ),
+                  gridData: FlGridData(show: true),
+                  borderData: FlBorderData(show: true),
                   lineBarsData: [
+                    // Income (Green)
                     LineChartBarData(
                       spots: incomeData,
                       isCurved: true,
                       color: Colors.green,
-                      barWidth: 2,
+                      barWidth: 3,
+                      dotData: FlDotData(show: false), // hide dots
+                      belowBarData: BarAreaData(show: false),
                     ),
+                    // Expense (Red)
                     LineChartBarData(
                       spots: expenseData,
                       isCurved: true,
                       color: Colors.red,
-                      barWidth: 2,
+                      barWidth: 3,
+                      dotData: FlDotData(show: false),
+                      belowBarData: BarAreaData(show: false),
                     ),
+                    // Saving (Blue)
                     LineChartBarData(
                       spots: savingData,
                       isCurved: true,
                       color: Colors.blue,
-                      barWidth: 2,
+                      barWidth: 3,
+                      dotData: FlDotData(show: false),
+                      belowBarData: BarAreaData(show: false),
                     ),
                   ],
                 ),
