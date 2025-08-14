@@ -123,22 +123,59 @@ class _SavingMonitorPageState extends State<SavingMonitorPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Saving Monitor"),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color.fromARGB(255, 31, 226, 168),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
+      body: Container(
+        //padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Top: Total Saving & Month
-            Text(
-              "Total Saving: \$${totalSaving.toStringAsFixed(2)}",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Container(
+              padding: const EdgeInsets.fromLTRB(28, 12, 12, 12),
+
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 31, 226, 168),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "\$${totalSaving.toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: EdgeInsets.all(1),
+                        margin: const EdgeInsets.only(top: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.lightBlue),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          "saving",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.lightBlue,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    currentMonth,
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              currentMonth,
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
-            ),
+
             const SizedBox(height: 10),
 
             // Line Chart
