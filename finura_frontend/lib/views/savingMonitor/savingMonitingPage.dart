@@ -241,8 +241,8 @@ class _SavingMonitorPageState extends State<SavingMonitorPage> {
             Expanded(
               flex: 2,
               child: Container(
-                padding: const EdgeInsets.all(16.0),
-                margin: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                padding: const EdgeInsets.all(18.0),
+                margin: const EdgeInsets.fromLTRB(0, 12, 0, 0),
                 decoration: BoxDecoration(
                   color: Color.fromARGB(255, 183, 238, 221),
                   borderRadius: BorderRadius.only(

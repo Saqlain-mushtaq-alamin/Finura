@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-
 class AboutPage extends StatelessWidget {
   Future<String> _getAppVersion() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -48,12 +47,12 @@ class AboutPage extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.person, color: Colors.green[800]),
               title: const Text('Developer'),
-              subtitle: const Text('Your Company/Name'),
+              subtitle: const Text('Saqlain Mushtaq Al Amin'),
             ),
             ListTile(
               leading: Icon(Icons.email, color: Colors.green[800]),
               title: const Text('Contact Email'),
-              subtitle: const Text('developer@example.com'),
+              subtitle: const Text('saqlainmushtaqal@gamil.com'),
               onTap: () {
                 // Open email client (email app)
               },
@@ -61,7 +60,7 @@ class AboutPage extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.language, color: Colors.green[800]),
               title: const Text('Website'),
-              subtitle: const Text('www.example.com'),
+              subtitle: const Text(''),
               onTap: () {
                 // Open the website in the browser
               },
@@ -114,5 +113,3 @@ class AboutPage extends StatelessWidget {
     );
   }
 }
-
-

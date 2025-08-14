@@ -1,4 +1,5 @@
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
+import 'package:finura_frontend/views/defoult/payment.dart';
 import 'package:finura_frontend/views/helpPage/help.dart';
 import 'package:finura_frontend/views/loninPage/login.dart';
 import 'package:finura_frontend/views/setting/P&S.dart';
@@ -123,22 +124,54 @@ class _SettingsPageState extends State<SettingsPage> {
                   _buildSettingOption(
                     icon: Icons.account_circle,
                     title: 'Account',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PaymentPage(), // Navigate to PaymentPage
+                        ),
+                      );
+                    },
                   ),
                   _buildSettingOption(
                     icon: Icons.notifications,
                     title: 'Notifications',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PaymentPage(), // Navigate to PaymentPage
+                        ),
+                      );
+                    },
                   ),
                   _buildSettingOption(
                     icon: Icons.settings,
                     title: 'App Settings',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PaymentPage(), // Navigate to PaymentPage
+                        ),
+                      );
+                    },
                   ),
                   _buildSettingOption(
                     icon: Icons.storage,
                     title: 'Data Management',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PaymentPage(), // Navigate to PaymentPage
+                        ),
+                      );
+                    },
                   ),
                   _buildSettingOption(
                     icon: Icons.support_agent,

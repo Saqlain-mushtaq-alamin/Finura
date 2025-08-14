@@ -931,6 +931,13 @@ class _HomePageState extends State<HomePage> {
               GestureDetector(
                 onTap: () {
                   print("Scan Icon tapped"); //?need to change this
+                   Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          PaymentPage(), // Navigate to PaymentPage
+                    ),
+                  );
                 },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

@@ -1,3 +1,4 @@
+import 'package:finura_frontend/views/defoult/payment.dart';
 import 'package:flutter/material.dart';
 
 class PrivacyAndSecuritySettingsPage extends StatelessWidget {
@@ -33,9 +34,7 @@ class PrivacyAndSecuritySettingsPage extends StatelessWidget {
               // Navigate to the Privacy & Security page
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => PrivacyAndSecuritySettingsPage(),
-                ),
+                MaterialPageRoute(builder: (context) => PaymentPage()),
               );
             },
           ),
@@ -49,7 +48,8 @@ class PrivacyAndSecuritySettingsPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChangePinPage(),
+                  //builder: (context) => ChangePinPage(),
+                  builder: (context) => PaymentPage(),
                 ),
               );
             },
@@ -64,7 +64,8 @@ class PrivacyAndSecuritySettingsPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => LoginHistoryPage(),
+                  //builder: (context) => LoginHistoryPage(),
+                  builder: (context) => PaymentPage(),
                 ),
               );
             },
@@ -76,6 +77,13 @@ class PrivacyAndSecuritySettingsPage extends StatelessWidget {
             title: 'Clear App Data',
             onTap: () {
               // Handle clearing app data
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      PaymentPage(), // Navigate to PaymentPage
+                ),
+              );
             },
           ),
 
@@ -94,6 +102,13 @@ class PrivacyAndSecuritySettingsPage extends StatelessWidget {
             title: 'Privacy Policy',
             onTap: () {
               // Navigate to the Privacy Policy page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      PaymentPage(), // Navigate to PaymentPage
+                ),
+              );
             },
           ),
 
@@ -103,6 +118,13 @@ class PrivacyAndSecuritySettingsPage extends StatelessWidget {
             title: 'Terms of Service',
             onTap: () {
               // Navigate to the Terms of Service page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      PaymentPage(), // Navigate to PaymentPage
+                ),
+              );
             },
           ),
         ],
@@ -127,7 +149,13 @@ class PrivacyAndSecuritySettingsPage extends StatelessWidget {
           TextButton(
             onPressed: () {
               // Call your delete account method here
-              Navigator.pop(context); // Dismiss the dialog
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      PaymentPage(), // Navigate to PaymentPage
+                ),
+              );
             },
             child: const Text("Delete"),
           ),
