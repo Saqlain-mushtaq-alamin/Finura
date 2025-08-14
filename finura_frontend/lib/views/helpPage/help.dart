@@ -47,7 +47,7 @@ class _GetHelpPageState extends State<GetHelpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 164, 245, 171),
+        backgroundColor: const Color.fromARGB(255, 56, 116, 228),
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Align(alignment: Alignment.centerLeft, child: Text('Get Help')),
         actions: [
@@ -57,29 +57,35 @@ class _GetHelpPageState extends State<GetHelpPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.green.shade100, Colors.white],
+            colors: [const Color.fromARGB(255, 75, 114, 187), Colors.white],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
 
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(Icons.support_agent, size: 64, color: Colors.blue),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/gif/help.gif',
+              height: 400,
+              width: double.infinity,
+              alignment: Alignment.center,
+              fit: BoxFit.cover,
+            ),
 
-              //Icon(FontAwesomeIcons.userHeadset, size: 32.0, color: Colors.blue),
-              SizedBox(height: 8),
-              Text(
-                'How can we help you?',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 60),
+            //Icon(FontAwesomeIcons.userHeadset, size: 32.0, color: Colors.blue),
+            SizedBox(height: 16),
+            Text(
+              'How can we help you?',
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 35),
 
-              // Your TextField and button go here
-              TextField(
+            // Your TextField and button go here
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
                 controller: _textController,
                 maxLines: 5,
                 decoration: InputDecoration(
@@ -90,48 +96,14 @@ class _GetHelpPageState extends State<GetHelpPage> {
                 ),
                 style: TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 12),
-              ElevatedButton(onPressed: _sendEmail, child: Text('Submit')),
+            ),
+            SizedBox(height: 12),
+            ElevatedButton(onPressed: _sendEmail, child: Text('Submit')),
 
-              SizedBox(height: 12),
-            ],
-          ),
+            SizedBox(height: 12),
+          ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        elevation: 8,
-        color: const Color.fromARGB(255, 164, 245, 171),
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              // QR Scanner icon (left)
-              IconButton(
-                icon: const Icon(Icons.qr_code_scanner, size: 28),
-                onPressed: () {
-                  // Handle QR scanner tap
-                },
-              ),
-              // Home icon (center)
-              IconButton(
-                icon: const Icon(Icons.home, size: 32),
-                onPressed: () {
-                  // Handle home tap
-                },
-              ),
-              // Notification icon (right)
-              IconButton(
-                icon: const Icon(Icons.notifications, size: 28),
-                onPressed: () {
-                  // Handle notification tap
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    
     );
   }
 }

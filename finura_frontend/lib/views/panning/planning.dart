@@ -134,159 +134,145 @@ class _PlanningPageState extends State<PlanningPage> {
           ),
         ],
       ),
-      body: Container(
-        //padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 150,
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(50, 10, 8.0, 8.0),
-              decoration: BoxDecoration(
-                color: Colors.green[100],
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(50),
-                  bottomRight: Radius.circular(50),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 150,
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(50, 10, 8.0, 8.0),
+            decoration: BoxDecoration(
+              color: Colors.green[100],
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(50),
+                bottomRight: Radius.circular(50),
+              ),
+            ),
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Expense limit", style: TextStyle(fontSize: 25)),
+                    const SizedBox(height: 10),
+                    Text(
+                      "${expenseLimit.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              child: Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(width: 80), // Space between text and image
+                Image.asset('assets/gif/plaing1.gif', height: 150, width: 150),
+              ],
+            ),
+          ),
+
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            margin: const EdgeInsets.all(8.0),
+
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 30),
+                // Row with month + icon
+                Container(
+                  height: 60,
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    border: Border.all(color: Colors.grey, width: 3.0),
+
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Row(
                     children: [
-                      const Text(
-                        "Expense limit",
-                        style: TextStyle(fontSize: 25),
+                      Expanded(
+                        child: Text(
+                          " $selectedMonth",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "${expenseLimit.toStringAsFixed(2)}",
-                        style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(color: Colors.grey, width: 3.0),
+                          ),
+                        ),
+
+                        child: IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () => _selectMonth(context),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(width: 80), // Space between text and image
-                  Image.asset(
-                    'assets/gif/plaing1.gif', 
-                    height: 150,
-                    width: 150,
+                ),
+                const SizedBox(height: 16),
+
+                // Monthly income
+                TextField(
+                  controller: incomeController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d*\.?\d{0,2}'),
+                    ),
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: "Monthly Income",
+                    border: OutlineInputBorder(),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 16),
+
+                // Target Saving
+                TextField(
+                  controller: savingController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d*\.?\d{0,2}'),
+                    ),
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: "Target Saving",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Description
+                TextField(
+                  controller: descriptionController,
+                  maxLines: 2,
+                  decoration: const InputDecoration(
+                    labelText: "Description",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Submit button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _submitGoal,
+
+                    child: const Text("Submit"),
+                  ),
+                ),
+              ],
             ),
-
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              margin: const EdgeInsets.all(8.0),
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 30),
-                  // Row with month + icon
-                  Container(
-                    height: 60,
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      border: Border.all(color: Colors.grey, width: 3.0),
-
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            " $selectedMonth",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              left: BorderSide(color: Colors.grey, width: 3.0),
-                            ),
-                          ),
-
-                          child: IconButton(
-                            icon: const Icon(Icons.calendar_today),
-                            onPressed: () => _selectMonth(context),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Monthly income
-                  TextField(
-                    controller: incomeController,
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d*\.?\d{0,2}'),
-                      ),
-                    ],
-                    decoration: const InputDecoration(
-                      labelText: "Monthly Income",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Target Saving
-                  TextField(
-                    controller: savingController,
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d*\.?\d{0,2}'),
-                      ),
-                    ],
-                    decoration: const InputDecoration(
-                      labelText: "Target Saving",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Description
-                  TextField(
-                    controller: descriptionController,
-                    maxLines: 2,
-                    decoration: const InputDecoration(
-                      labelText: "Description",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Submit button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _submitGoal,
-
-                      child: const Text("Submit"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
