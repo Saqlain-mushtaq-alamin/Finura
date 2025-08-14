@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:finura_frontend/services/local_database/local_database_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -539,150 +541,213 @@ class _DashboardPageState extends State<DashboardPage> {
         backgroundColor: const Color.fromARGB(255, 164, 245, 171),
       ),
       body: Container(
-        color: const Color.fromARGB(255, 240, 240, 240),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: SizedBox(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.only(left: 16),
-                      child: SizedBox(
-                        height: 25,
-                        width: 200,
-                        child: ToggleButtons(
-                          isSelected: [
-                            selectedRange == 'day',
-                            selectedRange == 'week',
-                            selectedRange == 'month',
-                          ],
-                          onPressed: (index) {
-                            setState(() {
-                              selectedRange = ['day', 'week', 'month'][index];
-                              _fetchData();
-                            });
-                          },
-                          children: const [
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              child: Text("Day"),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              child: Text("Week"),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              child: Text("Month"),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Income and Expense
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "Total Income:",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                Text(
-                                  "৳ ${totalIncome.toStringAsFixed(2)}",
-                                  style: const TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 19,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                const Text(
-                                  "Total Expense:",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                Text(
-                                  "৳ ${totalExpense.toStringAsFixed(2)}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red,
-                                    fontSize: 19,
-                                  ),
-                                ),
-                              ],
+        color: Colors.white,
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+
+                Container(
+                  alignment: Alignment.centerLeft,
+
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+
+                  child: Container(
+                    padding: const EdgeInsets.all(2.0),
+                    margin: const EdgeInsets.only(left: 4.0),
+                    child: SizedBox(
+                      height: 35,
+                      width: double.infinity,
+                      child: ToggleButtons(
+                        isSelected: [
+                          selectedRange == 'day',
+                          selectedRange == 'week',
+                          selectedRange == 'month',
+                        ],
+                        onPressed: (index) {
+                          setState(() {
+                            selectedRange = ['day', 'week', 'month'][index];
+                            _fetchData();
+                          });
+                        },
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+
+                            child: Text(
+                              "Day",
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
-
-                          // Pie Chart
-                          Expanded(
-                            flex: 1,
-                            child: SizedBox(
-                              height: 150,
-                              child: _buildPieChart(),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              "Week",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              "Month",
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
-
-                    // Line Chart
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 20, 8.0),
-                      child: SizedBox(
-                        height: 250,
-                        width: MediaQuery.of(context).size.width,
-                        child: selectedRange == 'day'
-                            ? _buildLineChartDay()
-                            : selectedRange == 'week'
-                            ? _buildLineChartWeek()
-                            : _buildLineChartMonth(),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Income and Expense
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.teal[50],
+                            border: Border.all(
+                              color: Colors.teal,
+                              width: sqrt1_2,
+                            ),
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Total Income:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Text(
+                                "৳ ${totalIncome.toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                "Total Expense:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Text(
+                                "৳ ${totalExpense.toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                  fontSize: 19,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      const SizedBox(width: 25),
+
+                      // Pie Chart
+                      Container(
+                        height: 155,
+                        width: 160,
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.teal, width: 2.0),
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: _buildPieChart(),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 40),
+
+                Column(
+                  children: [
+                    Container(
+                      // Background color for both sections
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey[50],
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      margin: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment
+                            .stretch, // Stretch the column to fill available width
                         children: [
-                          const Text(
-                            "Spending Mood Correlation",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            margin: const EdgeInsets.only(top: 20),
+                            // Line Chart
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                8.0,
+                                8.0,
+                                20,
+                                8.0,
+                              ),
+                              child: SizedBox(
+                                height: 250,
+                                width: double
+                                    .infinity, // Use double.infinity for full width
+                                child: selectedRange == 'day'
+                                    ? _buildLineChartDay()
+                                    : selectedRange == 'week'
+                                    ? _buildLineChartWeek()
+                                    : _buildLineChartMonth(),
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          _buildMoodScatterChart(),
+
+                          // Spending Mood Correlation section
+                          Container(
+                            margin: const EdgeInsets.only(top: 20),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Spending Mood Correlation",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _buildMoodScatterChart(),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
           ),
         ),
