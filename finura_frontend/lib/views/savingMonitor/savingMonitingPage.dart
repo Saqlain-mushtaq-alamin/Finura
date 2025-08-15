@@ -246,8 +246,8 @@ class _SavingMonitorPageState extends State<SavingMonitorPage> {
                 decoration: BoxDecoration(
                   color: Color.fromARGB(255, 183, 238, 221),
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+                    topLeft: Radius.circular(50),
+                    topRight: Radius.circular(0),
                   ),
                 ),
 

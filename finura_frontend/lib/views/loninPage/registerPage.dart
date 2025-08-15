@@ -14,8 +14,11 @@ import 'package:uuid/uuid.dart';
 
 Future<void> insertWelcomeNotification(String userId) async {
   final db = await FinuraLocalDbHelper().database;
-  final now = DateTime.now().toIso8601String();
-  final formattedTime = DateFormat('yyyy-MM-dd – hh:mm a').format(now as DateTime);
+  final now = DateTime.now(); // keep it as DateTime
+  final formattedTime = DateFormat(
+    'yyyy-MM-dd – hh:mm a',
+  ).format(now); // format it
+  final nowIso = now.toIso8601String(); // convert to ISO string if needed
 
   await db.insert('notification', {
     'id': const Uuid().v4(),
@@ -23,12 +26,12 @@ Future<void> insertWelcomeNotification(String userId) async {
     'predicted_expense_amount': 0.0,
     'predicted_mood': 5, // default neutral/happy mood
     'predicted_time': formattedTime,
-    'push_time': now,
+    'push_time': nowIso,
     'notif_message':
         'Welcome to Finura! Let’s start building your financial journey.',
     'notif_status': 0,
     'harm_level': ' ',
-    'created_at': now,
+    'created_at': nowIso,
   });
 }
 

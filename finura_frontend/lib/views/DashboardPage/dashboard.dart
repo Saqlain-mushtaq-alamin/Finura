@@ -41,7 +41,7 @@ class _DashboardPageState extends State<DashboardPage> {
     } else if (selectedRange == 'week') {
       startDate = now.subtract(const Duration(days: 6));
     } else {
-      startDate = now.subtract(const Duration(days: 29));
+      startDate = DateTime(now.year, now.month, 1); // Start of current month
     }
 
     final startStr = DateFormat('yyyy-MM-dd').format(startDate);
@@ -288,11 +288,13 @@ class _DashboardPageState extends State<DashboardPage> {
             color: Colors.green,
             value: totalIncome,
             title: '${(totalIncome / total * 100).toStringAsFixed(1)}%',
+            borderSide: const BorderSide(color: Colors.white, width: 2.0),
           ),
           PieChartSectionData(
             color: Colors.red,
             value: totalExpense,
             title: '${(totalExpense / total * 100).toStringAsFixed(1)}%',
+            borderSide: const BorderSide(color: Colors.white, width: 2.0),
           ),
         ],
       ),
@@ -329,7 +331,8 @@ class _DashboardPageState extends State<DashboardPage> {
           topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
-        gridData: FlGridData(show: true),
+        gridData: FlGridData(show: false),
+        borderData: FlBorderData(show: false),
         lineBarsData: [
           LineChartBarData(
             spots: incomeSpots,
@@ -383,7 +386,8 @@ class _DashboardPageState extends State<DashboardPage> {
           topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
-        gridData: FlGridData(show: true),
+        gridData: FlGridData(show: false),
+        borderData: FlBorderData(show: false),
         lineBarsData: [
           LineChartBarData(
             spots: incomeSpots,
@@ -440,7 +444,8 @@ class _DashboardPageState extends State<DashboardPage> {
           topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
-        gridData: FlGridData(show: true),
+        gridData: FlGridData(show: false),
+        borderData: FlBorderData(show: false),
         lineBarsData: [
           LineChartBarData(
             spots: incomeSpots,
@@ -498,8 +503,8 @@ class _DashboardPageState extends State<DashboardPage> {
           maxX: 5,
           minY: 0,
           maxY: maxY + 20,
-          gridData: FlGridData(show: true),
-          borderData: FlBorderData(show: true),
+          gridData: FlGridData(show: false),
+          borderData: FlBorderData(show: false),
           titlesData: FlTitlesData(
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
@@ -734,9 +739,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
+                                      color: Colors.teal,
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 20),
                                   _buildMoodScatterChart(),
                                 ],
                               ),
