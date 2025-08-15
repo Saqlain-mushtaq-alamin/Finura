@@ -123,222 +123,216 @@ class _SavingMonitorPageState extends State<SavingMonitorPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Saving Monitor"),
-        backgroundColor: const Color.fromARGB(255, 31, 226, 168),
+        backgroundColor: Color.fromARGB(255, 102, 241, 197),
       ),
-      body: Container(
-        //padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top: Total Saving & Month
-            Container(
-              padding: const EdgeInsets.fromLTRB(28, 12, 12, 12),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Top: Total Saving & Month
+          Container(
+            padding: const EdgeInsets.fromLTRB(28, 12, 12, 12),
 
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 31, 226, 168),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "\$${totalSaving.toStringAsFixed(2)}",
-                        style: const TextStyle(
-                          fontSize: 50,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Container(
-                        padding: EdgeInsets.all(1),
-                        margin: const EdgeInsets.only(top: 12),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.lightBlue),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          "saving",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.lightBlue,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    currentMonth,
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 30),
-                ],
-              ),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 102, 241, 197),
             ),
-
-            // Line Chart
-            Expanded(
-              flex: 2,
-              child: LineChart(
-                LineChartData(
-                  minX: 1,
-                  maxX: 30,
-                  minY: 0,
-                  backgroundColor: Color.fromARGB(255, 31, 226, 168),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "\$${totalSaving.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
-                    ),
-                  ),
-                  gridData: FlGridData(show: false),
-                  borderData: FlBorderData(show: false),
-                  lineBarsData: [
-                    // Income (Green)
-                    LineChartBarData(
-                      spots: incomeData,
-                      isCurved: true,
-                      color: Colors.green,
-                      barWidth: 3,
-                      dotData: FlDotData(show: false), // hide dots
-                      belowBarData: BarAreaData(show: false),
-                    ),
-                    // Expense (Red)
-                    LineChartBarData(
-                      spots: expenseData,
-                      isCurved: true,
-                      color: Colors.red,
-                      barWidth: 3,
-                      dotData: FlDotData(show: false),
-                      belowBarData: BarAreaData(show: false),
-                    ),
-                    // Saving (Blue)
-                    LineChartBarData(
-                      spots: savingData,
-                      isCurved: true,
-                      color: Colors.blue,
-                      barWidth: 3,
-                      dotData: FlDotData(show: false),
-                      belowBarData: BarAreaData(show: false),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: EdgeInsets.all(1),
+                      margin: const EdgeInsets.only(top: 12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.lightBlue),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        "saving",
+                        style: TextStyle(fontSize: 12, color: Colors.lightBlue),
+                      ),
                     ),
                   ],
                 ),
-              ),
+                Text(
+                  currentMonth,
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+                const SizedBox(height: 30),
+              ],
             ),
+          ),
 
-            const SizedBox(height: 30),
-
-            // Saving Goals List
-            Expanded(
-              flex: 2,
-              child: Container(
-                padding: const EdgeInsets.all(18.0),
-                margin: const EdgeInsets.fromLTRB(0, 12, 0, 0),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 183, 238, 221),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(0),
+          // Line Chart
+          Expanded(
+            flex: 2,
+            child: LineChart(
+              LineChartData(
+                minX: 1,
+                maxX: 30,
+                minY: 0,
+                backgroundColor: Color.fromARGB(255, 102, 241, 197),
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: true),
                   ),
                 ),
-
-                child: ListView.builder(
-                  itemCount: savingGoals.length,
-                  itemBuilder: (context, index) {
-                    final goal = savingGoals[index];
-                    double progress = 0;
-                    if (goal['target_saving'] > 0) {
-                      progress = (goal['current_saved'] / goal['target_saving'])
-                          .clamp(0.0, 1.0);
-                    }
-                    String goalMonth = DateFormat.MMMM().format(
-                      DateTime.parse(goal['start_date']),
-                    );
-
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          currentMonth = goalMonth;
-                        });
-                        _loadAllData(month: goalMonth);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 6),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.blue, width: 1),
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Month & % Left
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  goalMonth,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "${((1 - progress) * 100).toStringAsFixed(0)}% left",
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            // Progress Line
-                            Stack(
-                              children: [
-                                Container(
-                                  height: 6,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.lightBlue.shade100,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                Container(
-                                  height: 6,
-                                  width:
-                                      MediaQuery.of(context).size.width *
-                                      progress,
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            Text("Target Saving: \$${goal['target_saving']}"),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                gridData: FlGridData(show: false),
+                borderData: FlBorderData(show: false),
+                lineBarsData: [
+                  // Income (Green)
+                  LineChartBarData(
+                    spots: incomeData,
+                    isCurved: true,
+                    color: Colors.green,
+                    barWidth: 3,
+                    dotData: FlDotData(show: false), // hide dots
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                  // Expense (Red)
+                  LineChartBarData(
+                    spots: expenseData,
+                    isCurved: true,
+                    color: Colors.red,
+                    barWidth: 3,
+                    dotData: FlDotData(show: false),
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                  // Saving (Blue)
+                  LineChartBarData(
+                    spots: savingData,
+                    isCurved: true,
+                    color: Colors.blue,
+                    barWidth: 3,
+                    dotData: FlDotData(show: false),
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+
+          const SizedBox(height: 30),
+
+          // Saving Goals List
+          Expanded(
+            flex: 2,
+            child: Container(
+              padding: const EdgeInsets.all(18.0),
+              margin: const EdgeInsets.fromLTRB(0, 12, 0, 0),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 183, 238, 221),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(0),
+                ),
+              ),
+
+              child: ListView.builder(
+                itemCount: savingGoals.length,
+                itemBuilder: (context, index) {
+                  final goal = savingGoals[index];
+                  double progress = 0;
+                  if (goal['target_saving'] > 0) {
+                    progress = (goal['current_saved'] / goal['target_saving'])
+                        .clamp(0.0, 1.0);
+                  }
+                  String goalMonth = DateFormat.MMMM().format(
+                    DateTime.parse(goal['start_date']),
+                  );
+
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        currentMonth = goalMonth;
+                      });
+                      _loadAllData(month: goalMonth);
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.blue, width: 1),
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Month & % Left
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                goalMonth,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                "${((1 - progress) * 100).toStringAsFixed(0)}% left",
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          // Progress Line
+                          Stack(
+                            children: [
+                              Container(
+                                height: 6,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.lightBlue.shade100,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                              Container(
+                                height: 6,
+                                width:
+                                    MediaQuery.of(context).size.width *
+                                    progress,
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text("Target Saving: \$${goal['target_saving']}"),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
