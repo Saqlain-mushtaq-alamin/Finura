@@ -5,6 +5,7 @@ from backend.database import SessionLocal, engine  # from database/__init__.py
 from backend.database import models             # triggers models import
 from backend.database import crud, schemas         # same package
 from backend.jobs.scheduler import start_scheduler
+#  <--this code for sent the notification logic
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from backend.services.notification_scheduler import send_due_notifications
