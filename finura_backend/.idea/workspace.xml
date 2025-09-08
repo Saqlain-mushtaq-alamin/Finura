@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="055451d8-e38b-47c3-9788-409f0b9b0dec" name="Changes" comment="create a fcm service py file inside services folder" />
+    <list default="true" id="055451d8-e38b-47c3-9788-409f0b9b0dec" name="Changes" comment="create a notification_scheduler.py file for sent the notification from the database" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -98,7 +98,31 @@
       <option name="project" value="LOCAL" />
       <updated>1757316572527</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="add intial code for fcm services">
+      <option name="closed" value="true" />
+      <created>1757316647355</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1757316647355</updated>
+    </task>
+    <task id="LOCAL-00005" summary="install the fire base admin">
+      <option name="closed" value="true" />
+      <created>1757317044461</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1757317044461</updated>
+    </task>
+    <task id="LOCAL-00006" summary="create a notification_scheduler.py file for sent the notification from the database">
+      <option name="closed" value="true" />
+      <created>1757317148001</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1757317148001</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -116,7 +140,10 @@
     <MESSAGE value="update server database for storing the fcm token" />
     <MESSAGE value="add the logic to update the fcm token in routes.py file" />
     <MESSAGE value="create a fcm service py file inside services folder" />
-    <option name="LAST_COMMIT_MESSAGE" value="create a fcm service py file inside services folder" />
+    <MESSAGE value="add intial code for fcm services" />
+    <MESSAGE value="install the fire base admin" />
+    <MESSAGE value="create a notification_scheduler.py file for sent the notification from the database" />
+    <option name="LAST_COMMIT_MESSAGE" value="create a notification_scheduler.py file for sent the notification from the database" />
     <option name="LAST_CHUNK_COMMIT_MESSAGE" value="add initial table code on models.py file" />
   </component>
 </project>
