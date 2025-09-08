@@ -3,9 +3,21 @@ import 'package:finura_frontend/services/server%20connection/sync__service.dart'
 import 'package:finura_frontend/views/loninPage/login.dart';
 import 'package:flutter/material.dart';
 
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'finura_local_db.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await FinuraLocalDbHelper().insertNotification(message.data);
+}
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //await FinuraLocalDbHelper().resetDatabase(); // 🔥 Wipes old DB
+
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  
 
   // 🔥 Start sync right on app startup
   await SyncService.syncAll();
