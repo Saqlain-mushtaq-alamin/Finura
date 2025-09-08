@@ -2,6 +2,8 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Float, Text
 from . import Base  # imported from __init__.py
 from datetime import datetime
 
+
+
 class User(Base):
     __tablename__ = "user"
     id = Column(String, primary_key=True, index=True)
@@ -12,8 +14,9 @@ class User(Base):
     occupation = Column(String)
     sex = Column(String)
     created_at = Column(String)
-    fcm_token = Column(String)
+    fcm_token = Column(String)  # <-- keep the latest device token
     user_photo = Column(String)
+
 
 class ExpenseEntry(Base):
     __tablename__ = "expense_entry"

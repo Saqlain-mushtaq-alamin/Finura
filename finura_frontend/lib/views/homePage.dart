@@ -356,7 +356,8 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: List.generate(5, (index) {
                         // Mapping emoji and mood value
-                        final emojiList = ["😤", "😌", "😐", "🥳", "😍"];
+                        // final emojiList = ["😤", "😌", "😐", "🥳", "😍"];
+                        final emojiList = ['😢', '😟', '😐', '🙂', '😍'];
                         final moodValue = index + 1;
 
                         return GestureDetector(
@@ -931,7 +932,7 @@ class _HomePageState extends State<HomePage> {
               GestureDetector(
                 onTap: () {
                   print("Scan Icon tapped"); //?need to change this
-                   Navigator.push(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
