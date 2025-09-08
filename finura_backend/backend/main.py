@@ -6,6 +6,14 @@ from backend.database import models             # triggers models import
 from backend.database import crud, schemas         # same package
 from backend.jobs.scheduler import start_scheduler
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from backend.services.notification_scheduler import send_due_notifications
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(send_due_notifications, "cron", minute="*")  # check every min
+scheduler.start()
+
+
 # Create tables once on startup
 models.Base.metadata.create_all(bind=engine)
 
