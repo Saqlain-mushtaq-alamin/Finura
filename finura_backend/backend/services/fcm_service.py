@@ -19,3 +19,4 @@ def send_fcm_notification(token: str, title: str, body: str, data: dict = None):
     )
     response = messaging.send(message)
     return response
+     
